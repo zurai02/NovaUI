@@ -122,6 +122,13 @@ SettingsTab:CreateButton({
 
 SettingsTab:CreateLabel("NovaUI stores every flagged value in NovaUI.Flags for easy lookup elsewhere in your codebase.")
 
+SettingsTab:CreateDivider()
+
+SettingsTab:CreateParagraph({
+	Title = "About this menu",
+	Content = "Built with NovaUI — a single-file Luau component library. No external dependencies.",
+})
+
 NovaUI:Notify({
 	Title = "Welcome",
 	Type = "Success",
