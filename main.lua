@@ -10,9 +10,9 @@
 			local Window = NovaUI:CreateWindow({ Title = "My Game" })
 
 	No external services, no loadstring, no dependencies. Pure Luau.
-	Version 1.3.0 — resizable windows, ColorPicker, config export/import,
-	tab icons, more themes, tooltips, multi-select dropdowns, and proper
-	connection cleanup via Window:Destroy().
+	Version 1.5.0 — adds Paragraph and Divider components, fixes a bug
+	where CreateLabel's fixed height clipped wrapped multi-line text
+	instead of growing to fit it.
 ]]
 
 local TweenService = game:GetService("TweenService")
@@ -36,11 +36,21 @@ local function Create(className, properties, children)
 	return inst
 end
 
+-- TweenInfo objects are immutable; the library reuses the same handful
+-- of (duration, style, direction) combos constantly (every hover, every
+-- notification), so cache them instead of allocating one per call.
+local _tweenInfoCache = {}
 local function Tween(instance, goal, duration, style, direction)
 	duration = duration or 0.22
 	style = style or Enum.EasingStyle.Quint
 	direction = direction or Enum.EasingDirection.Out
-	local tw = TweenService:Create(instance, TweenInfo.new(duration, style, direction), goal)
+	local key = duration .. "|" .. style.Name .. "|" .. direction.Name
+	local info = _tweenInfoCache[key]
+	if not info then
+		info = TweenInfo.new(duration, style, direction)
+		_tweenInfoCache[key] = info
+	end
+	local tw = TweenService:Create(instance, info, goal)
 	tw:Play()
 	return tw
 end
@@ -54,6 +64,20 @@ end
 local function Hover(instance, baseColor, hoverColor)
 	instance.MouseEnter:Connect(function() Tween(instance, { BackgroundColor3 = hoverColor }, 0.12) end)
 	instance.MouseLeave:Connect(function() Tween(instance, { BackgroundColor3 = baseColor }, 0.15) end)
+end
+
+-- Adds a faint 1px lighter line along the top edge of a rounded card,
+-- giving otherwise-flat dark panels a subtle sense of depth.
+local function AddTopHighlight(frame)
+	Create("Frame", {
+		Name = "TopHighlight",
+		Size = UDim2.new(1, -16, 0, 1),
+		Position = UDim2.new(0, 8, 0, 0),
+		BackgroundColor3 = Color3.new(1, 1, 1),
+		BackgroundTransparency = 0.94,
+		BorderSizePixel = 0,
+		Parent = frame,
+	})
 end
 
 -- Attaches a small "i" badge to `parent` that shows `text` in a floating
@@ -220,6 +244,32 @@ function NovaUI:CreateWindow(config)
 		table.insert(_connections, conn)
 		return conn
 	end
+
+	-- Shared drag dispatcher: sliders, the ColorPicker's RGB channels, and the
+	-- resize handle all need live UserInputService.InputChanged/InputEnded
+	-- while the mouse is down. Rather than each one opening its own pair of
+	-- connections (which adds up fast on a menu with many sliders), every
+	-- draggable registers itself here and the window keeps exactly one pair
+	-- of connections total, dispatching to whichever drag is currently active.
+	local activeDragMove = nil
+	local activeDragEnd = nil
+	local function beginDrag(onMove, onEnd)
+		activeDragMove = onMove
+		activeDragEnd = onEnd
+	end
+	track(UserInputService.InputChanged:Connect(function(input)
+		if activeDragMove and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+			activeDragMove(input)
+		end
+	end))
+	track(UserInputService.InputEnded:Connect(function(input)
+		if activeDragEnd and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+			local fn = activeDragEnd
+			activeDragMove = nil
+			activeDragEnd = nil
+			fn(input)
+		end
+	end))
 
 	local ScreenGui = Create("ScreenGui", {
 		Name = "NovaUI_" .. title:gsub("%s+", ""),
@@ -395,29 +445,21 @@ function NovaUI:CreateWindow(config)
 	end
 
 	do
-		local resizing = false
 		local startInputPos, startSize
 		local minSize = Vector2.new(380, 260)
 
-		ResizeHandle.InputBegan:Connect(function(input)
+		track(ResizeHandle.InputBegan:Connect(function(input)
 			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-				resizing = true
 				startInputPos = input.Position
 				startSize = Main.Size
-				input.Changed:Connect(function()
-					if input.UserInputState == Enum.UserInputState.End then resizing = false end
-				end)
-			end
-		end)
-
-		track(UserInputService.InputChanged:Connect(function(input)
-			if resizing and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-				local delta = input.Position - startInputPos
-				local newW = math.max(minSize.X, startSize.X.Offset + delta.X)
-				local newH = math.max(minSize.Y, startSize.Y.Offset + delta.Y)
-				Main.Size = UDim2.new(0, newW, 0, newH)
-				local shadow = ScreenGui:FindFirstChild("Shadow")
-				if shadow then shadow.Size = UDim2.new(0, newW + 24, 0, newH + 24) end
+				beginDrag(function(moveInput)
+					local delta = moveInput.Position - startInputPos
+					local newW = math.max(minSize.X, startSize.X.Offset + delta.X)
+					local newH = math.max(minSize.Y, startSize.Y.Offset + delta.Y)
+					Main.Size = UDim2.new(0, newW, 0, newH)
+					local shadow = ScreenGui:FindFirstChild("Shadow")
+					if shadow then shadow.Size = UDim2.new(0, newW + 24, 0, newH + 24) end
+				end, function() end)
 			end
 		end))
 	end
@@ -525,8 +567,19 @@ function NovaUI:CreateWindow(config)
 			Parent = TabListHolder,
 		}, {
 			Create("UICorner", { CornerRadius = UDim.new(0, 10) }),
-			Create("UIPadding", { PaddingLeft = UDim.new(0, hasIcon and 34 or 10) }),
+			Create("UIPadding", { PaddingLeft = UDim.new(0, hasIcon and 34 or 14) }),
 		})
+
+		-- Accent indicator that grows in on the left edge of the selected tab
+		local indicator = Create("Frame", {
+			Name = "Indicator",
+			AnchorPoint = Vector2.new(0, 0.5),
+			Position = UDim2.new(0, 0, 0.5, 0),
+			Size = UDim2.new(0, 3, 0, 0),
+			BackgroundColor3 = theme.Accent,
+			BorderSizePixel = 0,
+			Parent = TabButton,
+		}, { Create("UICorner", { CornerRadius = UDim.new(1, 0) }) })
 
 		if hasIcon then
 			Create("ImageLabel", {
@@ -546,15 +599,18 @@ function NovaUI:CreateWindow(config)
 				t.Page.Visible = false
 				t.Selected = false
 				Tween(t.Button, { BackgroundTransparency = 1, TextColor3 = theme.SubText }, 0.15)
+				local ind = t.Button:FindFirstChild("Indicator")
+				if ind then Tween(ind, { Size = UDim2.new(0, 3, 0, 0) }, 0.15) end
 			end
 			Page.Visible = true
 			Tab.Selected = true
-			Tween(TabButton, { BackgroundTransparency = 0, BackgroundColor3 = theme.Elevated, TextColor3 = theme.Text }, 0.15)
+			Tween(TabButton, { BackgroundTransparency = 0.4, BackgroundColor3 = theme.Elevated, TextColor3 = theme.Text }, 0.15)
+			Tween(indicator, { Size = UDim2.new(0, 3, 0, 18) }, 0.18)
 		end
 
 		TabButton.MouseButton1Click:Connect(selectTab)
 		TabButton.MouseEnter:Connect(function()
-			if not Tab.Selected then Tween(TabButton, { BackgroundTransparency = 0.5, BackgroundColor3 = theme.Elevated }, 0.12) end
+			if not Tab.Selected then Tween(TabButton, { BackgroundTransparency = 0.6, BackgroundColor3 = theme.Elevated }, 0.12) end
 		end)
 		TabButton.MouseLeave:Connect(function()
 			if not Tab.Selected then Tween(TabButton, { BackgroundTransparency = 1 }, 0.15) end
@@ -602,7 +658,63 @@ function NovaUI:CreateWindow(config)
 				TextWrapped = true,
 				TextXAlignment = Enum.TextXAlignment.Left,
 				BackgroundTransparency = 1,
-				Size = UDim2.new(1, 0, 0, 20),
+				AutomaticSize = Enum.AutomaticSize.Y,
+				Size = UDim2.new(1, 0, 0, 0),
+				Parent = Page,
+			})
+		end
+
+		function Tab:CreateParagraph(opts)
+			opts = opts or {}
+			local holder = Create("Frame", {
+				BackgroundColor3 = theme.Elevated,
+				AutomaticSize = Enum.AutomaticSize.Y,
+				Size = UDim2.new(1, 0, 0, 0),
+				Parent = Page,
+			}, {
+				Create("UICorner", { CornerRadius = UDim.new(0, 10) }),
+				Create("UIPadding", {
+					PaddingLeft = UDim.new(0, 14), PaddingRight = UDim.new(0, 14),
+					PaddingTop = UDim.new(0, 12), PaddingBottom = UDim.new(0, 12),
+				}),
+				Create("UIListLayout", { Padding = UDim.new(0, 4), SortOrder = Enum.SortOrder.LayoutOrder }),
+			})
+			AddTopHighlight(holder)
+
+			if opts.Title then
+				Create("TextLabel", {
+					Text = opts.Title,
+					Font = Enum.Font.GothamBold,
+					TextSize = 13,
+					TextColor3 = theme.Text,
+					TextWrapped = true,
+					TextXAlignment = Enum.TextXAlignment.Left,
+					BackgroundTransparency = 1,
+					AutomaticSize = Enum.AutomaticSize.Y,
+					Size = UDim2.new(1, 0, 0, 0),
+					Parent = holder,
+				})
+			end
+
+			Create("TextLabel", {
+				Text = opts.Content or "",
+				Font = Enum.Font.Gotham,
+				TextSize = 12.5,
+				TextColor3 = theme.SubText,
+				TextWrapped = true,
+				TextXAlignment = Enum.TextXAlignment.Left,
+				BackgroundTransparency = 1,
+				AutomaticSize = Enum.AutomaticSize.Y,
+				Size = UDim2.new(1, 0, 0, 0),
+				Parent = holder,
+			})
+		end
+
+		function Tab:CreateDivider()
+			Create("Frame", {
+				Size = UDim2.new(1, 0, 0, 1),
+				BackgroundColor3 = theme.Stroke,
+				BorderSizePixel = 0,
 				Parent = Page,
 			})
 		end
@@ -618,6 +730,7 @@ function NovaUI:CreateWindow(config)
 				Size = UDim2.new(1, 0, 0, 36),
 				Parent = Page,
 			}, { Create("UICorner", { CornerRadius = UDim.new(0, 10) }) })
+			AddTopHighlight(btn)
 
 			Hover(btn, theme.Elevated, Lighten(theme.Elevated))
 			AttachTooltip(btn, theme, opts.Info)
@@ -640,6 +753,7 @@ function NovaUI:CreateWindow(config)
 				Size = UDim2.new(1, 0, 0, 36),
 				Parent = Page,
 			}, { Create("UICorner", { CornerRadius = UDim.new(0, 10) }) })
+			AddTopHighlight(holder)
 			Hover(holder, theme.Elevated, Lighten(theme.Elevated))
 
 			Create("TextLabel", {
@@ -695,6 +809,7 @@ function NovaUI:CreateWindow(config)
 				Size = UDim2.new(1, 0, 0, 46),
 				Parent = Page,
 			}, { Create("UICorner", { CornerRadius = UDim.new(0, 10) }) })
+			AddTopHighlight(holder)
 
 			Create("TextLabel", {
 				Text = opts.Name or "Slider",
@@ -733,37 +848,47 @@ function NovaUI:CreateWindow(config)
 				Parent = bar,
 			}, { Create("UICorner", { CornerRadius = UDim.new(1, 0) }) })
 
-			local dragging = false
+			local thumb = Create("Frame", {
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = UDim2.new((value - min) / (max - min), 0, 0.5, 0),
+				Size = UDim2.new(0, 14, 0, 14),
+				BackgroundColor3 = Color3.new(1, 1, 1),
+				ZIndex = 2,
+				Parent = bar,
+			}, {
+				Create("UICorner", { CornerRadius = UDim.new(1, 0) }),
+				Create("UIStroke", { Color = theme.Accent, Thickness = 2 }),
+			})
+
 			local function setFromAlpha(alpha)
 				alpha = math.clamp(alpha, 0, 1)
 				local raw = min + (max - min) * alpha
 				raw = math.floor(raw / increment + 0.5) * increment
 				raw = math.clamp(raw, min, max)
+				if raw == value then return end -- skip redundant tweens/callbacks mid-drag
 				value = raw
 				valueLabel.Text = tostring(raw)
-				Tween(fill, { Size = UDim2.new((raw - min) / (max - min), 0, 1, 0) }, 0.08)
+				local finalAlpha = (raw - min) / (max - min)
+				Tween(fill, { Size = UDim2.new(finalAlpha, 0, 1, 0) }, 0.08)
+				Tween(thumb, { Position = UDim2.new(finalAlpha, 0, 0.5, 0) }, 0.08)
 				if opts.Flag then NovaUI.Flags[opts.Flag] = raw end
 				if opts.Callback then task.spawn(opts.Callback, raw) end
 			end
 
+			local function growThumb() Tween(thumb, { Size = UDim2.new(0, 18, 0, 18) }, 0.1) end
+			local function shrinkThumb() Tween(thumb, { Size = UDim2.new(0, 14, 0, 14) }, 0.15) end
+
 			bar.InputBegan:Connect(function(input)
 				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-					dragging = true
+					growThumb()
 					local alpha = (input.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X
 					setFromAlpha(alpha)
+					beginDrag(function(moveInput)
+						local a = (moveInput.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X
+						setFromAlpha(a)
+					end, shrinkThumb)
 				end
 			end)
-			track(UserInputService.InputEnded:Connect(function(input)
-				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-					dragging = false
-				end
-			end))
-			track(UserInputService.InputChanged:Connect(function(input)
-				if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-					local alpha = (input.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X
-					setFromAlpha(alpha)
-				end
-			end))
 
 			if opts.Flag then NovaUI.Flags[opts.Flag] = value end
 			return { Set = function(v) setFromAlpha((v - min) / (max - min)) end, Get = function() return value end }
@@ -786,6 +911,7 @@ function NovaUI:CreateWindow(config)
 				ClipsDescendants = true,
 				Parent = Page,
 			}, { Create("UICorner", { CornerRadius = UDim.new(0, 10) }) })
+			AddTopHighlight(holder)
 
 			local head = Create("TextButton", {
 				Text = "",
@@ -828,7 +954,19 @@ function NovaUI:CreateWindow(config)
 				TextXAlignment = Enum.TextXAlignment.Right,
 				BackgroundTransparency = 1,
 				Position = UDim2.new(0.5, -30, 0, 0),
-				Size = UDim2.new(0.5, 18, 0, 36),
+				Size = UDim2.new(0.5, -20, 0, 36),
+				Parent = head,
+			})
+
+			local chevron = Create("TextLabel", {
+				Text = "▾",
+				Font = Enum.Font.GothamBold,
+				TextSize = 13,
+				TextColor3 = theme.SubText,
+				BackgroundTransparency = 1,
+				AnchorPoint = Vector2.new(1, 0.5),
+				Position = UDim2.new(1, -12, 0.5, 0),
+				Size = UDim2.new(0, 14, 0, 14),
 				Parent = head,
 			})
 
@@ -888,6 +1026,7 @@ function NovaUI:CreateWindow(config)
 				open = not open
 				local h = open and (36 + (#options * 26) + 4) or 36
 				Tween(holder, { Size = UDim2.new(1, 0, 0, h) }, 0.18)
+				Tween(chevron, { Rotation = open and 180 or 0 }, 0.18)
 			end)
 
 			if multi then
@@ -924,6 +1063,7 @@ function NovaUI:CreateWindow(config)
 				Create("UICorner", { CornerRadius = UDim.new(0, 10) }),
 				Create("UIStroke", { Color = theme.Stroke, Thickness = 1, Transparency = 1 }),
 			})
+			AddTopHighlight(holder)
 
 			local box = Create("TextBox", {
 				Text = opts.DefaultText or "",
@@ -964,6 +1104,7 @@ function NovaUI:CreateWindow(config)
 				Size = UDim2.new(1, 0, 0, 36),
 				Parent = Page,
 			}, { Create("UICorner", { CornerRadius = UDim.new(0, 10) }) })
+			AddTopHighlight(holder)
 			Hover(holder, theme.Elevated, Lighten(theme.Elevated))
 
 			Create("TextLabel", {
@@ -1017,7 +1158,6 @@ function NovaUI:CreateWindow(config)
 			opts = opts or {}
 			local color = opts.CurrentColor or Color3.fromRGB(242, 169, 59)
 			local open = false
-			local trackConn = track -- alias: this scope also declares locals named `track` (UI frames)
 
 			local holder = Create("Frame", {
 				BackgroundColor3 = theme.Elevated,
@@ -1025,6 +1165,7 @@ function NovaUI:CreateWindow(config)
 				ClipsDescendants = true,
 				Parent = Page,
 			}, { Create("UICorner", { CornerRadius = UDim.new(0, 10) }) })
+			AddTopHighlight(holder)
 
 			local head = Create("TextButton", {
 				Text = "",
@@ -1096,27 +1237,22 @@ function NovaUI:CreateWindow(config)
 				}, { Create("UICorner", { CornerRadius = UDim.new(1, 0) }) })
 
 				local channelValue = initial
-				local dragging = false
 				local function set(alpha)
 					alpha = math.clamp(alpha, 0, 1)
-					channelValue = math.floor(alpha * 255 + 0.5)
+					local newValue = math.floor(alpha * 255 + 0.5)
+					if newValue == channelValue then return end -- skip redundant updates mid-drag
+					channelValue = newValue
 					fill.Size = UDim2.new(alpha, 0, 1, 0)
 					onChange()
 				end
 				track.InputBegan:Connect(function(input)
 					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-						dragging = true
 						set((input.Position.X - track.AbsolutePosition.X) / track.AbsoluteSize.X)
+						beginDrag(function(moveInput)
+							set((moveInput.Position.X - track.AbsolutePosition.X) / track.AbsoluteSize.X)
+						end, function() end)
 					end
 				end)
-				trackConn(UserInputService.InputEnded:Connect(function(input)
-					if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then dragging = false end
-				end))
-				trackConn(UserInputService.InputChanged:Connect(function(input)
-					if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-						set((input.Position.X - track.AbsolutePosition.X) / track.AbsoluteSize.X)
-					end
-				end))
 				return { get = function() return channelValue end }
 			end
 
