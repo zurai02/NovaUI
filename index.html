@@ -6,220 +6,7 @@
 <title>NovaUI — Documentation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg: #15171C;
-    --panel: #1C1F26;
-    --elevated: #242832;
-    --accent: #F2A93B;
-    --accent-dim: #7A5A26;
-    --text: #EBECF0;
-    --subtext: #969AA3;
-    --stroke: #343841;
-    --success: #5AC882;
-    --danger: #E65F5A;
-  }
-  *{ box-sizing: border-box; }
-  html{ scroll-behavior: smooth; }
-  body{
-    margin:0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    line-height: 1.65;
-  }
-  h1,h2,h3,.mono{ font-family: 'Space Grotesk', sans-serif; }
-  code, pre, .code-font{ font-family: 'JetBrains Mono', monospace; }
-
-  a{ color: var(--accent); text-decoration:none; }
-  a:hover{ text-decoration: underline; }
-
-  /* ---------- Layout ---------- */
-  .shell{ display:flex; min-height:100vh; }
-
-  .sidebar{
-    width: 232px;
-    flex-shrink:0;
-    position: sticky;
-    top:0;
-    height:100vh;
-    overflow-y:auto;
-    border-right: 1px solid var(--stroke);
-    padding: 28px 18px;
-  }
-  .brand{
-    display:flex; align-items:center; gap:10px;
-    margin-bottom: 28px;
-    padding-left: 4px;
-  }
-  .brand-mark{
-    width:26px; height:26px; border-radius:10px;
-    background: linear-gradient(135deg, var(--accent), #c97f1f);
-    flex-shrink:0;
-  }
-  .brand-name{ font-weight:700; font-size:16px; letter-spacing:-0.01em; }
-  .brand-version{ color:var(--subtext); font-size:11px; font-family:'JetBrains Mono',monospace; }
-
-  .nav-group{ margin-bottom: 22px; }
-  .nav-label{
-    color: #6b6f79;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 0 10px 6px;
-    letter-spacing: 0.02em;
-  }
-  .nav-group a{
-    display:block;
-    color: var(--subtext);
-    font-size: 13.5px;
-    padding: 6px 10px;
-    border-radius: 6px;
-    margin-bottom: 1px;
-  }
-  .nav-group a:hover{ background: var(--panel); color: var(--text); text-decoration:none; }
-  .nav-group a.active{ background: var(--elevated); color: var(--accent); }
-
-  main{ flex:1; min-width:0; padding: 56px 64px 120px; max-width: 880px; }
-  section{ padding-top: 18px; margin-bottom: 64px; }
-  section h2{
-    font-size: 22px; font-weight:600; margin: 0 0 6px;
-    padding-bottom: 12px; border-bottom: 1px solid var(--stroke);
-  }
-  section > p.lead{ color: var(--subtext); margin-top: 14px; max-width: 60ch; }
-
-  /* ---------- Hero ---------- */
-  .hero{ padding-top: 8px; margin-bottom: 72px; }
-  .hero-grid{
-    display:grid; grid-template-columns: 1.05fr 1fr; gap: 48px;
-    align-items:center;
-  }
-  .eyebrow{ color: var(--accent); font-size: 13px; font-weight:600; margin-bottom:14px; }
-  .hero h1{
-    font-size: 40px; line-height:1.12; margin:0 0 18px; font-weight:700;
-    max-width: 15ch;
-  }
-  .hero p{ color: var(--subtext); font-size: 16px; max-width: 46ch; margin-bottom: 26px; }
-  .hero-actions{ display:flex; gap:12px; }
-  .btn{
-    display:inline-block; padding: 10px 18px; border-radius: 10px;
-    font-weight:600; font-size:14px; border:1px solid transparent;
-  }
-  .btn-primary{ background: var(--accent); color: #1a1305; }
-  .btn-primary:hover{ background:#ffb84f; text-decoration:none; }
-  .btn-ghost{ border-color: var(--stroke); color: var(--text); }
-  .btn-ghost:hover{ border-color:#4a4f5c; text-decoration:none; }
-
-  /* mock window in hero, echoing NovaUI's own chrome */
-  .mock-window{
-    background: var(--panel);
-    border: 1px solid var(--stroke);
-    border-radius: 18px;
-    overflow:hidden;
-    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.55);
-  }
-  .mock-topbar{
-    background: var(--elevated); padding: 10px 10px 10px 14px;
-    border-bottom:1px solid var(--stroke);
-    display:flex; align-items:flex-start; justify-content:space-between;
-  }
-  .mock-topbar .t1{ font-size:13px; font-weight:600; }
-  .mock-topbar .t2{ font-size:11px; color:var(--subtext); }
-  .mock-controls{ display:flex; gap:4px; }
-  .mock-controls span{
-    width:24px; height:24px; border-radius:7px;
-    display:flex; align-items:center; justify-content:center;
-    color:var(--subtext); font-size:13px;
-  }
-  .mock-body{ display:flex; height: 260px; }
-  .mock-rail{ width: 90px; border-right:1px solid var(--stroke); padding:10px 8px; }
-  .mock-tab{ font-size:11.5px; padding:7px 8px; border-radius:8px; color:var(--subtext); margin-bottom:3px; }
-  .mock-tab.active{ background: var(--elevated); color: var(--text); }
-  .mock-page{ flex:1; padding:14px; }
-  .mock-row{
-    background: var(--elevated); border-radius:10px; height:34px;
-    display:flex; align-items:center; justify-content:space-between;
-    padding:0 10px; margin-bottom:8px; font-size:11.5px; color:var(--subtext);
-  }
-  .mock-switch{ width:32px; height:17px; border-radius:20px; background:var(--accent); position:relative; }
-  .mock-switch::after{ content:''; position:absolute; right:2px; top:2px; width:13px; height:13px; border-radius:50%; background:#fff; }
-  .mock-bar{ height:6px; border-radius:4px; background: var(--stroke); position:relative; }
-  .mock-bar::after{ content:''; position:absolute; left:0; top:0; bottom:0; width:62%; background:var(--accent); border-radius:4px; }
-
-  /* ---------- Code blocks ---------- */
-  pre{
-    background: var(--panel);
-    border: 1px solid var(--stroke);
-    border-radius: 12px;
-    padding: 16px 18px;
-    overflow-x:auto;
-    font-size: 13px;
-    line-height:1.6;
-    color: #d7dae0;
-  }
-  .kw{ color:#c97fe0; } .str{ color:#8fce9e; } .cm{ color:#6b6f79; } .fn{ color:#7fb4e0; }
-  .copy-btn{
-    position:absolute; top:10px; right:10px;
-    background: var(--elevated); color: var(--subtext);
-    border:1px solid var(--stroke); border-radius: 6px;
-    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:500;
-    padding: 4px 10px; cursor:pointer;
-  }
-  .copy-btn:hover{ color: var(--text); border-color:#4a4f5c; }
-  p code, li code{
-    background: var(--panel); border:1px solid var(--stroke);
-    padding: 1px 7px; border-radius: 6px; font-size: 13px; color:#d7dae0;
-  }
-
-  /* ---------- Steps ---------- */
-  .steps{ counter-reset: step; list-style:none; padding:0; margin: 20px 0 0; }
-  .steps li{
-    counter-increment: step;
-    display:grid; grid-template-columns: 28px 1fr; gap:14px;
-    margin-bottom: 18px;
-  }
-  .steps li::before{
-    content: counter(step);
-    width:28px; height:28px; border-radius:50%;
-    background: var(--elevated); border:1px solid var(--stroke);
-    display:flex; align-items:center; justify-content:center;
-    font-size:12.5px; font-weight:600; color:var(--accent);
-  }
-  .steps li > div > p{ margin: 2px 0 8px; color:var(--subtext); }
-
-  /* ---------- Component reference ---------- */
-  .comp{
-    border: 1px solid var(--stroke);
-    border-radius: 14px;
-    padding: 20px 22px;
-    margin-bottom: 18px;
-    background: var(--panel);
-  }
-  .comp h3{ font-size: 16px; margin: 0 0 4px; font-weight:600; }
-  .comp .desc{ color:var(--subtext); font-size:13.5px; margin-bottom:14px; }
-
-  table{ width:100%; border-collapse: collapse; font-size: 13.5px; margin-top:8px; }
-  th{ text-align:left; color:var(--subtext); font-weight:600; padding: 8px 10px; border-bottom:1px solid var(--stroke); font-size:12.5px; }
-  td{ padding: 9px 10px; border-bottom:1px solid var(--stroke); }
-  td:first-child, th:first-child{ font-family:'JetBrains Mono',monospace; color:var(--accent); font-size:12.5px; }
-
-  .swatches{ display:flex; flex-wrap:wrap; gap:14px; margin-top:18px; }
-  .swatch{ width:130px; }
-  .swatch-fill{ height:56px; border-radius:12px; border:1px solid var(--stroke); margin-bottom:6px; }
-  .swatch .name{ font-size:12.5px; font-weight:600; }
-  .swatch .hex{ font-size:11.5px; color:var(--subtext); font-family:'JetBrains Mono',monospace; }
-
-  footer{
-    border-top:1px solid var(--stroke);
-    padding-top: 24px; color: var(--subtext); font-size: 13px;
-  }
-
-  @media (max-width: 860px){
-    .sidebar{ display:none; }
-    main{ padding: 32px 24px 100px; }
-    .hero-grid{ grid-template-columns: 1fr; }
-  }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -229,7 +16,7 @@
       <div class="brand-mark"></div>
       <div>
         <div class="brand-name">NovaUI</div>
-        <div class="brand-version">v1.3.0</div>
+        <div class="brand-version">v1.5.0</div>
       </div>
     </div>
 
@@ -250,12 +37,14 @@
       <a href="#input">Input</a>
       <a href="#keybind">Keybind</a>
       <a href="#colorpicker">ColorPicker</a>
+      <a href="#paragraph">Paragraph &amp; Divider</a>
       <a href="#notify">Notify</a>
     </div>
 
     <div class="nav-group">
       <div class="nav-label">Reference</div>
       <a href="#theming">Theming</a>
+      <a href="#performance">Performance</a>
       <a href="#flags">Flags &amp; state</a>
       <a href="#config">Config export/import</a>
       <a href="#changelog">Changelog</a>
@@ -280,7 +69,7 @@
           <div class="mock-topbar">
             <div>
               <div class="t1">Aurora Client</div>
-              <div class="t2">v1.3.0</div>
+              <div class="t2">v1.5.0</div>
             </div>
             <div class="mock-controls">
               <span>–</span><span>×</span>
@@ -406,7 +195,7 @@ Main:<span class="fn">CreateSlider</span>({
       <h2>Slider</h2>
       <div class="comp">
         <h3>Tab:CreateSlider({ Name, Range, Increment, CurrentValue, Flag, Callback })</h3>
-        <div class="desc"><code>Range</code> is a <code>{min, max}</code> pair. Drag or click anywhere on the track; the value snaps to <code>Increment</code>.</div>
+        <div class="desc"><code>Range</code> is a <code>{min, max}</code> pair. Drag the thumb or click anywhere on the track; the value snaps to <code>Increment</code>. The thumb grows slightly while held for clearer feedback.</div>
       </div>
     </section>
 
@@ -414,7 +203,7 @@ Main:<span class="fn">CreateSlider</span>({
       <h2>Dropdown</h2>
       <div class="comp">
         <h3>Tab:CreateDropdown({ Name, Options, CurrentOption, Flag, Callback })</h3>
-        <div class="desc">Returns <code>{ Set, Get, Refresh }</code> — call <code>Refresh(newOptions)</code> to repopulate the list at runtime.</div>
+        <div class="desc">Returns <code>{ Set, Get, Refresh }</code> — call <code>Refresh(newOptions)</code> to repopulate the list at runtime. The chevron on the right rotates to show open/closed state.</div>
       </div>
       <div class="comp">
         <h3>Multi-select mode</h3>
@@ -443,6 +232,18 @@ Main:<span class="fn">CreateSlider</span>({
       <div class="comp">
         <h3>Tab:CreateColorPicker({ Name, CurrentColor, Flag, Callback })</h3>
         <div class="desc">Click the swatch to expand three RGB sliders. Returns <code>{ Set, Get }</code>; <code>Callback(color)</code> fires as each channel is dragged.</div>
+      </div>
+    </section>
+
+    <section id="paragraph">
+      <h2>Paragraph &amp; Divider</h2>
+      <div class="comp">
+        <h3>Tab:CreateParagraph({ Title, Content })</h3>
+        <div class="desc">A card for longer descriptive text — instructions, changelog notes, warnings — that grows to fit its content instead of clipping. <code>Title</code> is optional.</div>
+      </div>
+      <div class="comp">
+        <h3>Tab:CreateDivider()</h3>
+        <div class="desc">A plain 1px separator line, for breaking up a tab without a section label.</div>
       </div>
     </section>
 
@@ -478,6 +279,27 @@ Main:<span class="fn">CreateSlider</span>({
 })</pre>
     </section>
 
+    <section id="performance">
+      <h2>Performance</h2>
+      <p class="lead">A few deliberate choices keep NovaUI cheap to run alongside whatever else is happening in the game.</p>
+      <div class="comp">
+        <h3>One shared drag dispatcher per window</h3>
+        <div class="desc">Sliders, the ColorPicker's RGB channels, and the resize handle all need live mouse-move tracking while held. Rather than each one opening its own <code>UserInputService</code> connections, every draggable registers with a single dispatcher the window already owns. Connection count stays flat no matter how many sliders or pickers a menu has — it doesn't scale with UI size.</div>
+      </div>
+      <div class="comp">
+        <h3>Change-gated updates</h3>
+        <div class="desc">Dragging a slider fires mouse-move events far more often than the value actually changes once rounded to its increment. Every value setter checks against the current value first and skips the tween, the flag write, and the callback entirely when nothing changed.</div>
+      </div>
+      <div class="comp">
+        <h3>Cached TweenInfo</h3>
+        <div class="desc"><code>TweenInfo</code> objects are immutable, so the same handful of (duration, style, direction) combinations — reused on every hover, click, and notification — are built once and cached rather than reallocated per call.</div>
+      </div>
+      <div class="comp">
+        <h3>Window:Destroy()</h3>
+        <div class="desc">Every connection a window creates is tracked internally. Calling <code>Window:Destroy()</code> disconnects all of them and removes the ScreenGui, instead of leaving orphaned listeners behind if you discard a window reference without cleaning up.</div>
+      </div>
+    </section>
+
     <section id="flags">
       <h2>Flags &amp; state</h2>
       <p class="lead">Any component given a <code>Flag</code> mirrors its current value into <code>NovaUI.Flags[Flag]</code>, so the rest of your codebase can read it without holding a reference to the component itself.</p>
@@ -501,6 +323,18 @@ Main:<span class="fn">CreateSlider</span>({
 
     <section id="changelog">
       <h2>Changelog</h2>
+      <div class="comp">
+        <h3>v1.5.0</h3>
+        <div class="desc">New Paragraph and Divider components. Fixed a bug where <code>CreateLabel</code>'s fixed height clipped wrapped multi-line text instead of growing to fit it.</div>
+      </div>
+      <div class="comp">
+        <h3>v1.4.0</h3>
+        <div class="desc"><strong>Performance pass.</strong> Sliders, the ColorPicker's RGB channels, and the resize handle previously each opened their own <code>UserInputService</code> connections — a menu with many sliders meant many always-on listeners. They now share one drag dispatcher per window, so connection count is flat regardless of how many components exist. Redundant mid-drag tweens and callbacks are skipped when a value hasn't actually changed, and <code>TweenInfo</code> objects are cached instead of reallocated on every hover.</div>
+      </div>
+      <div class="comp">
+        <h3>v1.3.1</h3>
+        <div class="desc">Visual refinement pass: a growing accent indicator on the selected tab, an actual drag thumb on sliders, a rotating chevron on dropdowns, and a subtle top-highlight bevel on every card for a bit of depth against the flat background.</div>
+      </div>
       <div class="comp">
         <h3>v1.3.0</h3>
         <div class="desc">Three new theme presets (Ocean, Amethyst, Emerald) plus full custom theme tables, tooltips via <code>Info</code> on buttons, multi-select dropdowns, and <code>Window:Destroy()</code> for proper connection cleanup.</div>
@@ -526,38 +360,7 @@ Main:<span class="fn">CreateSlider</span>({
   </main>
 </div>
 
-<script>
-  // Copy-to-clipboard on every code block
-  document.querySelectorAll('pre').forEach(function(pre){
-    var btn = document.createElement('button');
-    btn.textContent = 'Copy';
-    btn.className = 'copy-btn';
-    pre.style.position = 'relative';
-    pre.appendChild(btn);
-    btn.addEventListener('click', function(){
-      var text = pre.innerText.replace(/Copy$/, '').trim();
-      navigator.clipboard.writeText(text).then(function(){
-        btn.textContent = 'Copied';
-        setTimeout(function(){ btn.textContent = 'Copy'; }, 1500);
-      });
-    });
-  });
-
-  // Scrollspy: highlight the active nav link as sections pass
-  var links = Array.from(document.querySelectorAll('.sidebar a'));
-  var sections = links.map(function(a){ return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
-  var observer = new IntersectionObserver(function(entries){
-    entries.forEach(function(entry){
-      var link = document.querySelector('.sidebar a[href="#' + entry.target.id + '"]');
-      if (!link) return;
-      if (entry.isIntersecting) {
-        links.forEach(function(l){ l.classList.remove('active'); });
-        link.classList.add('active');
-      }
-    });
-  }, { rootMargin: '-10% 0px -70% 0px' });
-  sections.forEach(function(s){ observer.observe(s); });
-</script>
+<script src="app.js"></script>
 
 </body>
 </html>
