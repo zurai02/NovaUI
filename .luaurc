@@ -1,0 +1,9 @@
+{ 
+  "languageMode": "strict", 
+  "typeErrors": true, 
+  "aliases": { 
+    "nova": "./main.lua" 
+  }, 
+  "target": "native", 
+  "optimizationLevel": 2 
+}
