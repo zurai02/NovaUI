@@ -20,7 +20,26 @@ local function warn_(tag, msg)
     warn(("[NovaUI Reporter] [%s] %s"):format(tag, tostring(msg)))
 end
 
--- ── Discord webhook ───────────────────────────────────────────
+-- ── User ID hashing (FNV-1a 32-bit, hex output) ───────────────
+-- Never sends the real UserId to Discord.
+
+local function hashId(id)
+    local h = 2166136261
+    local s = tostring(id)
+    for i = 1, #s do
+        h = bit32.bxor(h, string.byte(s, i))
+        h = bit32.band(h * 16777619, 0xFFFFFFFF)
+    end
+    return ("%08x"):format(h)
+end
+
+local function safePlayer()
+    local p = Players.LocalPlayer
+    if not p then return "unknown#????????" end
+    return ("%s#%s"):format(p.Name, hashId(p.UserId))
+end
+
+-- ── Discord webhook (errors only) ────────────────────────────
 
 local function sendWebhook(title, description, color, fields)
     if not WEBHOOK_URL or WEBHOOK_URL == "" then return end
@@ -188,7 +207,7 @@ local function loadNovaUI()
             {
                 { name="URL",        value=NOVA_URL },
                 { name="Last Error", value=lastErr or "unknown" },
-                { name="Player",     value=tostring(Players.LocalPlayer) },
+                { name="Player",     value=safePlayer() },
                 { name="Game",       value=GAME_NAME.." ("..game.PlaceId..")" },
             }
         )
@@ -209,7 +228,7 @@ local function loadNovaUI()
             0xFF6600,
             {
                 { name="Compile Error", value=compileErr },
-                { name="Player",        value=tostring(Players.LocalPlayer) },
+                { name="Player",        value=safePlayer() },
                 { name="Game",          value=GAME_NAME.." ("..game.PlaceId..")" },
             }
         )
@@ -230,7 +249,7 @@ local function loadNovaUI()
             0xFF9900,
             {
                 { name="Runtime Error", value=result },
-                { name="Player",        value=tostring(Players.LocalPlayer) },
+                { name="Player",        value=safePlayer() },
                 { name="Game",          value=GAME_NAME.." ("..game.PlaceId..")" },
             }
         )
@@ -238,17 +257,6 @@ local function loadNovaUI()
         pcall(showErrorWindow, errors)
         return nil
     end
-
-    -- Success — optionally ping webhook
-    sendWebhook(
-        "✅ NovaUI Loaded Successfully",
-        "NovaUI loaded with no errors.",
-        0x00CC66,
-        {
-            { name="Player", value=tostring(Players.LocalPlayer) },
-            { name="Game",   value=GAME_NAME.." ("..game.PlaceId..")" },
-        }
-    )
 
     log("OK","NovaUI loaded successfully.")
     return result
