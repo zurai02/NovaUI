@@ -2,7 +2,7 @@
   "languageMode": "strict", 
   "typeErrors": true, 
   "aliases": { 
-    "nova": "./main.lua" 
+    "NovaUI": "./NovaUI.lua" 
   }, 
   "target": "native", 
   "optimizationLevel": 2 
