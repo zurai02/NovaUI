@@ -1,29 +1,3 @@
---[[
-  Icons.luau  ·  NovaUI Icon Module
-  ────────────────────────────────────────────────────────────
-  Self-contained. No asset IDs. No external dependencies.
-  Every icon is drawn with pure Roblox instances (Frames +
-  UICorners + Rotations). Works in any exploit / game.
-
-  USAGE
-  ─────
-  local Icons = loadstring(game:HttpGet("YOUR_ICONS_URL"))()
-
-  -- Get a pre-built GuiObject (clone it, parent it anywhere)
-  local icon = Icons.Get("search", 20, Color3.fromRGB(255,255,255))
-  icon.Parent = someFrame
-
-  -- Or use the name table for asset-ID icons (fallback set)
-  local id = Icons.Id["star"]  -- returns rbxassetid string or nil
-
-  INTEGRATION WITH NOVAU
-  ──────────────────────
-  After loading both:
-      NovaUI.Icons = Icons
-  Then inside components:
-      local ico = NovaUI.Icons.Get("close", 16, theme.Text)
-]]
-
 local Icons = {}
 
 -- ── Asset ID fallback table ───────────────────────────────────
