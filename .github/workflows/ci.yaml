@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-all-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Aftman (Toolchain Manager)
+        uses: ok-collab/setup-aftman@v0.4.0
+
+      - name: Verify Tools Installation
+        run: |
+          selene --version
+          stylua --version
+          rojo --version
+          luau-lsp --version
+
+      - name: Check Code Formatting (StyLua)
+        run: stylua --check src/
+
+      - name: Lint Code (Selene)
+        run: selene src/
+
+      - name: Run Luau Type Checking (Luau-LSP)
+        run: |
+          # Generates definitions for Roblox/Luau globals if you use rojo
+          rojo sourcemap default.project.json --output sourcemap.json
+          luau-lsp analyze --sourcemap=sourcemap.json src/
+
+      - name: Build Project File (Rojo)
+        run: rojo build default.project.json --output NovaUI.rbxm
