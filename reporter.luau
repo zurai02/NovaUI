@@ -1,6 +1,19 @@
+--[[
+  NovaUI Reporter  ·  Auto error reporter via Discord webhook
+  ─────────────────────────────────────────────────────────────
+  SETUP: fill in the three values below, then host this file
+  and load it with:
+
+      local NovaUI = loadstring(game:HttpGet("YOUR_REPORTER_URL"))()
+
+  That's it. reporter auto-loads NovaUI, and if anything goes
+  wrong it fires your Discord webhook with a full report.
+]]
+
 -- ── FILL THESE IN ─────────────────────────────────────────────
 local NOVA_URL      = "https://raw.githubusercontent.com/zurai02/NovaUI/main/NovaUI.luau"   -- raw URL to your NovaUI.lua
-local WEBHOOK_URL   = "https://discord.com/api/webhooks/1555994743052181635/7WOe47yTS5res95ISWXTsEg9VFqPL68w_S4SQEuS-9DEkqpBUfT3fnWmMH7QmnTnDl2W"   -- your Discord webhook URL
+local ICONS_URL     = "https://raw.githubusercontent.com/zurai02/NovaUI/main/Icons.luau"   -- raw URL to your Icons.luau  (optional)
+local WEBHOOK_URL   = "https://discord.com/api/webhooks/1555994743052181635/7WOe47yTS5res95ISWXTsEg9VFqPL68w_S4SQEuS-9DEkqpBUfT3fnWmMH7QmnTnDl2W"   -- your Discord webhook URL    (optional)
 local GAME_NAME     = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name or tostring(game.PlaceId)
 -- ──────────────────────────────────────────────────────────────
 
@@ -259,6 +272,33 @@ local function loadNovaUI()
     end
 
     log("OK","NovaUI loaded successfully.")
+
+    -- ── Icons: load silently, attach as fallback ───────────────
+    if ICONS_URL and ICONS_URL ~= "" then
+        task.spawn(function()
+            local ok2, src2 = pcall(function()
+                return game:HttpGet(ICONS_URL, true)
+            end)
+            if not ok2 or type(src2) ~= "string" or #src2 < 50 then
+                warn_("ICONS","Failed to fetch Icons — skipping ("..tostring(src2)..")")
+                return
+            end
+            local chunk2, ce2 = loadstring(src2)
+            if not chunk2 then
+                warn_("ICONS","Icons compile error — skipping ("..tostring(ce2)..")")
+                return
+            end
+            local ok3, icons = pcall(chunk2)
+            if not ok3 or type(icons) ~= "table" then
+                warn_("ICONS","Icons execute error — skipping ("..tostring(icons)..")")
+                return
+            end
+            -- Attach to the NovaUI table so components can use it
+            result.Icons = icons
+            log("ICONS","Icons loaded and attached to NovaUI.Icons")
+        end)
+    end
+
     return result
 end
 
