@@ -2,7 +2,7 @@
   "languageMode": "strict", 
   "typeErrors": true, 
   "aliases": { 
-    "NovaUI": "./NovaUI.lua" 
+    "NovaUI": "./NovaUI.luau" 
   }, 
   "target": "native", 
   "optimizationLevel": 2 
