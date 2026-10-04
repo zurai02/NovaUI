@@ -1,0 +1,1069 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>NovaUI Docs</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+
+<style>
+/* ─── LAYOUT: sidebar + content, sticky nav, glass cards ─── */
+:root {
+  --bg:         #0d0d12;
+  --bg2:        #13131a;
+  --bg3:        #1a1a24;
+  --surface:    #1e1e2e;
+  --surface2:   #252538;
+  --border:     rgba(255,255,255,0.07);
+  --border2:    rgba(255,255,255,0.12);
+  --accent:     #6366f1;
+  --accent2:    #818cf8;
+  --accent-glow:rgba(99,102,241,0.18);
+  --text:       #e2e2f0;
+  --text2:      #9a9ab8;
+  --text3:      #5c5c7a;
+  --success:    #34d399;
+  --warning:    #fbbf24;
+  --danger:     #f87171;
+  --tag-bg:     rgba(99,102,241,0.12);
+  --code-bg:    #0a0a10;
+  --scrollbar:  rgba(99,102,241,0.3);
+  color-scheme: dark;
+}
+/* Light mode */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg:         #f4f4f8;
+    --bg2:        #ffffff;
+    --bg3:        #eeeef4;
+    --surface:    #ffffff;
+    --surface2:   #f0f0f6;
+    --border:     rgba(0,0,0,0.08);
+    --border2:    rgba(0,0,0,0.14);
+    --accent:     #6366f1;
+    --accent2:    #4f46e5;
+    --accent-glow:rgba(99,102,241,0.1);
+    --text:       #111118;
+    --text2:      #52526e;
+    --text3:      #a0a0b8;
+    --tag-bg:     rgba(99,102,241,0.08);
+    --code-bg:    #1a1a2a;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg:#f4f4f8;--bg2:#ffffff;--bg3:#eeeef4;--surface:#ffffff;--surface2:#f0f0f6;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);--accent:#6366f1;--accent2:#4f46e5;
+  --accent-glow:rgba(99,102,241,0.1);--text:#111118;--text2:#52526e;--text3:#a0a0b8;
+  --tag-bg:rgba(99,102,241,0.08);--code-bg:#1a1a2a;color-scheme:light;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 4px; }
+
+/* ─── SHELL ─── */
+.shell {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  grid-template-rows: 52px 1fr;
+  height: 100%;
+  min-height: 100%;
+}
+
+/* ─── TOPBAR ─── */
+.topbar {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 16px;
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 100;
+}
+.topbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.logo-mark {
+  width: 28px; height: 28px;
+  background: linear-gradient(135deg, var(--accent), #a78bfa);
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: -1px;
+  box-shadow: 0 0 16px var(--accent-glow);
+}
+.logo-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+.logo-version {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--accent2);
+  background: var(--tag-bg);
+  padding: 2px 7px;
+  border-radius: 99px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.topbar-search {
+  flex: 1;
+  max-width: 340px;
+  margin-left: auto;
+}
+.search-input {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px 6px 34px;
+  font-size: 13px;
+  color: var(--text);
+  font-family: inherit;
+  outline: none;
+  transition: border-color .15s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235c5c7a' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 10px center;
+}
+.search-input:focus { border-color: var(--accent); }
+.search-input::placeholder { color: var(--text3); }
+.topbar-actions { display: flex; gap: 8px; align-items: center; margin-left: 12px; }
+.topbar-btn {
+  background: none; border: 1px solid var(--border); border-radius: 7px;
+  color: var(--text2); padding: 5px 11px; font-size: 12px; font-family: inherit;
+  cursor: pointer; transition: all .15s;
+}
+.topbar-btn:hover { border-color: var(--accent); color: var(--accent2); }
+.topbar-theme-btn {
+  width: 30px; height: 30px;
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 7px;
+  cursor: pointer; display: grid; place-items: center; transition: all .15s;
+  color: var(--text2);
+}
+.topbar-theme-btn:hover { border-color: var(--accent); color: var(--accent2); }
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  grid-column: 1;
+  grid-row: 2;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 16px 0 24px;
+  position: sticky;
+  top: 52px;
+  height: calc(100vh - 52px);
+}
+.sidebar-section { margin-bottom: 4px; }
+.sidebar-section-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  padding: 12px 18px 6px;
+}
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 18px;
+  font-size: 13.5px;
+  color: var(--text2);
+  text-decoration: none;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all .12s;
+  border-left: 2px solid transparent;
+  user-select: none;
+}
+.sidebar-link:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+.sidebar-link.active {
+  color: var(--accent2);
+  background: var(--accent-glow);
+  border-left-color: var(--accent);
+  font-weight: 500;
+}
+.sidebar-link .dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--text3);
+  flex-shrink: 0;
+}
+.sidebar-link.active .dot { background: var(--accent); }
+.sidebar-badge {
+  margin-left: auto;
+  font-size: 10px; font-weight: 600;
+  padding: 1px 6px; border-radius: 99px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.badge-new { background: rgba(99,102,241,0.18); color: var(--accent2); }
+.badge-opt { background: rgba(100,100,100,0.18); color: var(--text3); }
+.sidebar-divider { height: 1px; background: var(--border); margin: 8px 18px; }
+
+/* ─── CONTENT ─── */
+.content {
+  grid-column: 2;
+  grid-row: 2;
+  overflow-y: auto;
+  height: calc(100vh - 52px);
+  padding: 0;
+}
+.page { display: none; padding: 40px 48px 80px; max-width: 860px; }
+.page.active { display: block; }
+
+@media (max-width: 700px) {
+  .shell { grid-template-columns: 1fr; grid-template-rows: 52px auto 1fr; }
+  .sidebar { display: none; }
+  .content { grid-column: 1; }
+  .page { padding: 24px 16px 60px; }
+  .topbar-search { max-width: 160px; }
+}
+
+/* ─── PAGE TYPOGRAPHY ─── */
+.page-eyebrow {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--accent2); margin-bottom: 10px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.page-title {
+  font-size: 30px; font-weight: 700; letter-spacing: -0.6px;
+  color: var(--text); line-height: 1.2;
+  text-wrap: balance;
+  margin-bottom: 12px;
+}
+.page-lead {
+  font-size: 16px; color: var(--text2); line-height: 1.7;
+  max-width: 600px; margin-bottom: 32px;
+}
+.page-divider { height: 1px; background: var(--border); margin: 36px 0; }
+
+h2.section-heading {
+  font-size: 19px; font-weight: 700; letter-spacing: -0.3px;
+  color: var(--text); margin-bottom: 10px; margin-top: 40px;
+  display: flex; align-items: center; gap: 8px;
+}
+h2.section-heading:first-of-type { margin-top: 0; }
+h3.sub-heading {
+  font-size: 14px; font-weight: 600; color: var(--text);
+  margin-bottom: 6px; margin-top: 24px;
+}
+p { color: var(--text2); line-height: 1.72; margin-bottom: 14px; }
+p:last-child { margin-bottom: 0; }
+
+/* ─── INLINE CODE ─── */
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  background: var(--surface2);
+  color: var(--accent2);
+  padding: 2px 6px;
+  border-radius: 5px;
+}
+
+/* ─── CODE BLOCK ─── */
+.codeblock {
+  background: var(--code-bg);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 16px 0;
+  font-size: 13px;
+}
+.codeblock-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.03);
+}
+.codeblock-lang {
+  font-size: 11px; font-weight: 600; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--text3);
+  font-family: 'JetBrains Mono', monospace;
+}
+.copy-btn {
+  font-size: 11px; font-weight: 500;
+  background: none; border: 1px solid var(--border2); border-radius: 5px;
+  color: var(--text3); padding: 3px 10px; cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all .12s;
+}
+.copy-btn:hover { border-color: var(--accent); color: var(--accent2); }
+.copy-btn.copied { color: var(--success); border-color: var(--success); }
+.codeblock pre {
+  padding: 16px; overflow-x: auto; background: none;
+  font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  line-height: 1.65; color: #c9d1d9;
+}
+/* Syntax tints */
+.kw { color: #a78bfa; }
+.fn { color: #60a5fa; }
+.st { color: #86efac; }
+.cm { color: #4b5563; font-style: italic; }
+.nm { color: #fbbf24; }
+.op { color: #94a3b8; }
+
+/* ─── CALLOUTS ─── */
+.callout {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 14px 16px;
+  border-radius: 9px;
+  border-left: 3px solid;
+  margin: 18px 0;
+  font-size: 14px; line-height: 1.6;
+}
+.callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.callout-text { color: var(--text2); }
+.callout-text strong { color: var(--text); }
+.callout.info { background: rgba(99,102,241,0.08); border-color: var(--accent); }
+.callout.info .callout-icon { color: var(--accent2); }
+.callout.warn { background: rgba(251,191,36,0.07); border-color: var(--warning); }
+.callout.warn .callout-icon { color: var(--warning); }
+.callout.tip  { background: rgba(52,211,153,0.07); border-color: var(--success); }
+.callout.tip  .callout-icon { color: var(--success); }
+
+/* ─── PARAM TABLE ─── */
+.param-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13.5px; }
+.param-table th {
+  text-align: left; padding: 8px 14px;
+  font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--text3); border-bottom: 1px solid var(--border2);
+  font-family: 'JetBrains Mono', monospace;
+}
+.param-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.param-table tr:last-child td { border-bottom: none; }
+.param-table td:first-child { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--accent2); }
+.param-table td:nth-child(2) { color: var(--text3); font-size: 12px; }
+.param-table td:nth-child(3) { color: var(--text2); }
+.req-badge { color: var(--danger); font-size: 10px; vertical-align: super; }
+.opt-badge { color: var(--text3); font-size: 10px; vertical-align: super; }
+
+/* ─── FEATURE GRID ─── */
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 20px 0; }
+.feature-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  transition: border-color .15s;
+}
+.feature-card:hover { border-color: var(--border2); }
+.feature-icon {
+  width: 32px; height: 32px;
+  background: var(--tag-bg);
+  border-radius: 8px;
+  display: grid; place-items: center;
+  font-size: 15px; margin-bottom: 10px;
+}
+.feature-card h4 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.feature-card p { font-size: 12px; color: var(--text2); margin: 0; line-height: 1.55; }
+
+/* ─── COMPONENT ROW ─── */
+.component-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  margin-bottom: 6px;
+  transition: border-color .12s;
+}
+.component-row:hover { border-color: var(--border2); }
+.comp-name { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent2); min-width: 160px; }
+.comp-desc { font-size: 13px; color: var(--text2); flex: 1; }
+.comp-tag { font-size: 10.5px; font-weight: 600; padding: 2px 8px; border-radius: 99px; background: var(--tag-bg); color: var(--accent2); }
+
+/* ─── THEME SWATCH ─── */
+.theme-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; margin: 16px 0; }
+.theme-swatch {
+  border-radius: 8px; overflow: hidden; border: 1px solid var(--border);
+  cursor: pointer; transition: transform .12s, border-color .12s;
+}
+.theme-swatch:hover { transform: translateY(-2px); border-color: var(--border2); }
+.swatch-preview { height: 44px; }
+.swatch-name { font-size: 11.5px; font-weight: 500; padding: 7px 10px; background: var(--surface); color: var(--text2); }
+
+/* ─── NAV BREADCRUMB ─── */
+.breadcrumb { display: flex; align-items: center; gap: 6px; margin-bottom: 24px; }
+.breadcrumb span { font-size: 12.5px; color: var(--text3); }
+.breadcrumb a { font-size: 12.5px; color: var(--text2); text-decoration: none; }
+.breadcrumb a:hover { color: var(--accent2); }
+.breadcrumb .sep { color: var(--text3); }
+
+/* ─── BOTTOM NAV ─── */
+.page-nav { display: flex; gap: 12px; margin-top: 48px; }
+.page-nav-btn {
+  flex: 1; border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px 18px; background: var(--surface); text-decoration: none;
+  display: flex; flex-direction: column; gap: 2px; transition: border-color .15s, background .15s;
+  cursor: pointer;
+}
+.page-nav-btn:hover { border-color: var(--accent); background: var(--accent-glow); }
+.page-nav-btn .dir { font-size: 11px; color: var(--text3); }
+.page-nav-btn .nav-title { font-size: 14px; font-weight: 600; color: var(--text); }
+.page-nav-btn.next { align-items: flex-end; }
+</style>
+
+<div class="shell">
+
+  <!-- ─── TOPBAR ─── -->
+  <header class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-mark">N</div>
+      <span class="logo-text">NovaUI</span>
+      <span class="logo-version">v6.0</span>
+    </div>
+    <div class="topbar-search">
+      <input class="search-input" placeholder="Search docs…" id="searchInput">
+    </div>
+    <div class="topbar-actions">
+      <button class="topbar-btn" onclick="showPage('api-createwindow')">API Reference</button>
+      <button class="topbar-theme-btn" id="themeToggle" title="Toggle theme">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ─── SIDEBAR ─── -->
+  <nav class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Getting Started</div>
+      <a class="sidebar-link active" onclick="showPage('introduction')"><span class="dot"></span>Introduction</a>
+      <a class="sidebar-link" onclick="showPage('quickstart')"><span class="dot"></span>Quick Start</a>
+      <a class="sidebar-link" onclick="showPage('reporter')"><span class="dot"></span>Reporter<span class="sidebar-badge badge-new">New</span></a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">API Reference</div>
+      <a class="sidebar-link" onclick="showPage('api-createwindow')"><span class="dot"></span>CreateWindow</a>
+      <a class="sidebar-link" onclick="showPage('api-createtab')"><span class="dot"></span>CreateTab</a>
+      <a class="sidebar-link" onclick="showPage('api-components')"><span class="dot"></span>Components</a>
+      <a class="sidebar-link" onclick="showPage('api-notify')"><span class="dot"></span>Notify</a>
+      <a class="sidebar-link" onclick="showPage('api-keysystem')"><span class="dot"></span>KeySystem</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Customisation</div>
+      <a class="sidebar-link" onclick="showPage('themes')"><span class="dot"></span>Themes</a>
+      <a class="sidebar-link" onclick="showPage('icons')"><span class="dot"></span>Icons<span class="sidebar-badge badge-new">New</span></a>
+      <a class="sidebar-link" onclick="showPage('config')"><span class="dot"></span>Config System</a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Advanced</div>
+      <a class="sidebar-link" onclick="showPage('lite')"><span class="dot"></span>NovaUI Lite</a>
+      <a class="sidebar-link" onclick="showPage('mobile')"><span class="dot"></span>Mobile Support<span class="sidebar-badge badge-opt">Auto</span></a>
+    </div>
+  </nav>
+
+  <!-- ─── CONTENT ─── -->
+  <main class="content">
+
+    <!-- INTRODUCTION -->
+    <article class="page active" id="page-introduction">
+      <div class="breadcrumb"><a onclick="showPage('introduction')">Docs</a><span class="sep">/</span><span>Introduction</span></div>
+      <div class="page-eyebrow">Getting Started</div>
+      <h1 class="page-title">NovaUI v6.0 "Lumen"</h1>
+      <p class="page-lead">A depth-layered, physics-animated Roblox UI library. 22 themes, 37 components, zero external assets.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card"><div class="feature-icon">⚡</div><h4>Fast</h4><p>TweenInfo pool, local aliases, memoised layout pass.</p></div>
+        <div class="feature-card"><div class="feature-icon">🎨</div><h4>22 Themes</h4><p>From Dark to Sakura. Register your own in one call.</p></div>
+        <div class="feature-card"><div class="feature-icon">📱</div><h4>Mobile-first</h4><p>Auto-detects touch, repositions window, scales UI.</p></div>
+        <div class="feature-card"><div class="feature-icon">🔑</div><h4>KeySystem</h4><p>Built-in key gate with webhook check support.</p></div>
+        <div class="feature-card"><div class="feature-icon">💾</div><h4>Config save</h4><p>JSON export/import; auto-saves flag state.</p></div>
+        <div class="feature-card"><div class="feature-icon">🛡️</div><h4>Reporter</h4><p>Auto error reporting to Discord on load failure.</p></div>
+      </div>
+
+      <h2 class="section-heading">Load it</h2>
+      <div class="codeblock">
+        <div class="codeblock-header"><span class="codeblock-lang">Luau</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">local</span> NovaUI <span class="op">=</span> <span class="fn">loadstring</span>(<span class="fn">game</span><span class="op">:</span><span class="fn">HttpGet</span>(<span class="st">"https://raw.githubusercontent.com/you/repo/main/NovaUI.lua"</span>))()</pre>
+      </div>
+
+      <div class="callout info"><span class="callout-icon">ℹ</span><div class="callout-text"><strong>HTTP Requests</strong> must be enabled in your game's settings (Game Settings → Security → Allow HTTP Requests).</div></div>
+
+      <h2 class="section-heading">Create a window</h2>
+      <div class="codeblock">
+        <div class="codeblock-header"><span class="codeblock-lang">Luau</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">local</span> Window <span class="op">=</span> NovaUI<span class="op">:</span><span class="fn">CreateWindow</span>({
+    Title    <span class="op">=</span> <span class="st">"My Script"</span>,
+    Subtitle <span class="op">=</span> <span class="st">"v1.0"</span>,
+    Theme    <span class="op">=</span> <span class="st">"Dark"</span>,
+})
+
+<span class="kw">local</span> Tab <span class="op">=</span> Window<span class="op">:</span><span class="fn">CreateTab</span>({ Name <span class="op">=</span> <span class="st">"Main"</span> })
+
+Tab<span class="op">:</span><span class="fn">CreateButton</span>({
+    Name     <span class="op">=</span> <span class="st">"Click Me"</span>,
+    Callback <span class="op">=</span> <span class="kw">function</span>()
+        NovaUI<span class="op">:</span><span class="fn">Notify</span>({ Title <span class="op">=</span> <span class="st">"Hello!"</span>, Content <span class="op">=</span> <span class="st">"Button pressed."</span>, Type <span class="op">=</span> <span class="st">"Success"</span> })
+    <span class="kw">end</span>,
+})</pre>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn next" onclick="showPage('quickstart')">
+          <span class="dir">Next →</span>
+          <span class="nav-title">Quick Start</span>
+        </button>
+      </div>
+    </article>
+
+    <!-- QUICK START -->
+    <article class="page" id="page-quickstart">
+      <div class="breadcrumb"><a onclick="showPage('introduction')">Docs</a><span class="sep">/</span><span>Quick Start</span></div>
+      <div class="page-eyebrow">Getting Started</div>
+      <h1 class="page-title">Quick Start</h1>
+      <p class="page-lead">A complete working script in under 30 lines.</p>
+
+      <div class="codeblock">
+        <div class="codeblock-header"><span class="codeblock-lang">Luau — complete example</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="cm">-- Load NovaUI</span>
+<span class="kw">local</span> NovaUI <span class="op">=</span> <span class="fn">loadstring</span>(<span class="fn">game</span><span class="op">:</span><span class="fn">HttpGet</span>(<span class="st">"RAW_URL_HERE"</span>))()
+
+<span class="cm">-- Window</span>
+<span class="kw">local</span> Win <span class="op">=</span> NovaUI<span class="op">:</span><span class="fn">CreateWindow</span>({ Title <span class="op">=</span> <span class="st">"Hub"</span>, Theme <span class="op">=</span> <span class="st">"Amethyst"</span> })
+
+<span class="cm">-- Tab</span>
+<span class="kw">local</span> Tab <span class="op">=</span> Win<span class="op">:</span><span class="fn">CreateTab</span>({ Name <span class="op">=</span> <span class="st">"Combat"</span> })
+
+<span class="cm">-- Toggle</span>
+Tab<span class="op">:</span><span class="fn">CreateToggle</span>({
+    Name    <span class="op">=</span> <span class="st">"Auto Farm"</span>,
+    Default <span class="op">=</span> <span class="kw">false</span>,
+    Flag    <span class="op">=</span> <span class="st">"AutoFarm"</span>,
+    Callback <span class="op">=</span> <span class="kw">function</span>(val)
+        <span class="fn">print</span>(<span class="st">"Auto Farm:"</span>, val)
+    <span class="kw">end</span>,
+})
+
+<span class="cm">-- Slider</span>
+Tab<span class="op">:</span><span class="fn">CreateSlider</span>({
+    Name    <span class="op">=</span> <span class="st">"Walk Speed"</span>,
+    Min     <span class="op">=</span> <span class="nm">16</span>, Max <span class="op">=</span> <span class="nm">200</span>, Default <span class="op">=</span> <span class="nm">16</span>,
+    Flag    <span class="op">=</span> <span class="st">"WalkSpeed"</span>,
+    Callback <span class="op">=</span> <span class="kw">function</span>(v)
+        <span class="fn">game</span>.Players.LocalPlayer.Character.Humanoid.WalkSpeed <span class="op">=</span> v
+    <span class="kw">end</span>,
+})</pre>
+      </div>
+
+      <div class="callout tip"><span class="callout-icon">✦</span><div class="callout-text"><strong>Flags</strong> are optional string keys. Set them to enable config save/load — NovaUI remembers the value across sessions automatically.</div></div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="showPage('introduction')">
+          <span class="dir">← Previous</span><span class="nav-title">Introduction</span>
+        </button>
+        <button class="page-nav-btn next" onclick="showPage('reporter')">
+          <span class="dir">Next →</span><span class="nav-title">Reporter</span>
+        </button>
+      </div>
+    </article>
+
+    <!-- REPORTER -->
+    <article class="page" id="page-reporter">
+      <div class="breadcrumb"><a onclick="showPage('introduction')">Docs</a><span class="sep">/</span><span>Reporter</span></div>
+      <div class="page-eyebrow">Getting Started</div>
+      <h1 class="page-title">Reporter</h1>
+      <p class="page-lead">Auto-loads NovaUI and fires a Discord webhook if anything goes wrong. Replace the three URLs and you're done.</p>
+
+      <h2 class="section-heading">Setup</h2>
+      <div class="codeblock">
+        <div class="codeblock-header"><span class="codeblock-lang">reporter.luau — top section</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">local</span> NOVA_URL    <span class="op">=</span> <span class="st">""</span>   <span class="cm">-- raw URL to NovaUI.lua</span>
+<span class="kw">local</span> ICONS_URL   <span class="op">=</span> <span class="st">""</span>   <span class="cm">-- raw URL to Icons.luau  (optional)</span>
+<span class="kw">local</span> WEBHOOK_URL <span class="op">=</span> <span class="st">""</span>   <span class="cm">-- Discord webhook URL    (optional)</span></pre>
+      </div>
+
+      <h2 class="section-heading">Load via loadstring</h2>
+      <div class="codeblock">
+        <div class="codeblock-header"><span class="codeblock-lang">Luau</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">local</span> NovaUI <span class="op">=</span> <span class="fn">loadstring</span>(<span class="fn">game</span><span class="op">:</span><span class="fn">HttpGet</span>(<span class="st">"YOUR_REPORTER_URL"</span>))()</pre>
+      </div>
+
+      <h2 class="section-heading">Error paths</h2>
+      <p>The reporter handles three failure cases. Each fires the webhook and shows an in-game error window (no NovaUI required).</p>
+
+      <div class="component-row"><span class="comp-name">HTTP failure</span><span class="comp-desc">NOVA_URL unreachable after 3 retries</span><span class="comp-tag">Webhook</span></div>
+      <div class="component-row"><span class="comp-name">Compile error</span><span class="comp-desc">Source downloaded but loadstring() failed</span><span class="comp-tag">Webhook</span></div>
+      <div class="component-row"><span class="comp-name">Runtime error</span><span class="comp-desc">Compiled but threw on execution</span><span class="comp-tag">Webhook</span></div>
+
+      <div class="callout info"><span class="callout-icon">ℹ</span><div class="callout-text"><strong>User IDs</strong> are never sent raw. The reporter applies FNV-1a 32-bit hashing — the webhook receives an 8-char hex fingerprint like <code>a3f29c11</code>.</div></div>
+
+      <div class="callout tip"><span class="callout-icon">✦</span><div class="callout-text"><strong>Icons fallback</strong> — if <code>ICONS_URL</code> is set, the drawn icon module loads <em>only</em> when NovaUI fails. It is skipped entirely on success.</div></div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="showPage('quickstart')">
+          <span class="dir">← Previous</span><span class="nav-title">Quick Start</span>
+        </button>
+        <button class="page-nav-btn next" onclick="showPage('api-createwindow')">
+          <span class="dir">Next →</span><span class="nav-title">CreateWindow</span>
+        </button>
+      </div>
+    </article>
+
+    <!-- API: CREATEWINDOW -->
+    <article class="page" id="page-api-createwindow">
+      <div class="breadcrumb"><a onclick="showPage('introduction')">Docs</a><span class="sep">/</span><span>API Reference</span><span class="sep">/</span><span>CreateWindow</span></div>
+      <div class="page-eyebrow">API Reference</div>
+      <h1 class="page-title">CreateWindow</h1>
+      <p class="page-lead">Creates the root window. Returns a <code>Window</code> object used to create tabs and access the config API.</p>
+
+      <div class="codeblock">
+        <div class="codeblock-header"><span class="codeblock-lang">Signature</span></div>
+        <pre><span class="fn">NovaUI</span><span class="op">:</span><span class="fn">CreateWindow</span>(cfg: <span class="nm">WindowConfig</span>) <span class="op">-></span> <span class="nm">Window</span></pre>
+      </div>
+
+      <h2 class="section-heading">Parameters</h2>
+      <div style="overflow-x:auto">
+      <table class="param-table">
+        <tr><th>Key</th><th>Type</th><th>Description</th></tr>
+        <tr><td>Title<span class="req-badge">*</span></td><td>string</td><td>Window header text.</td></tr>
+        <tr><td>Subtitle<span class="opt-badge">?</span></td><td>string</td><td>Smaller text beneath the title.</td></tr>
+        <tr><td>Theme<span class="opt-badge">?</span></td><td>string | table</td><td>Theme name (<code>"Dark"</code>) or a custom theme table. Default: <code>"Dark"</code>.</td></tr>
+        <tr><td>Size<span class="opt-badge">?</span></td><td>UDim2</td><td>Override window size. Auto-sized for mobile when omitted.</td></tr>
+        <tr><td>Position<span class="opt-badge">?</span></td><td>UDim2</td><td>Initial position. Centered when omitted.</td></tr>
+        <tr><td>ToggleKey<span class="opt-badge">?</span></td><td>Enum.KeyCode</td><td>Key to show/hide window. Default: <code>RightControl</code>.</td></tr>
+        <tr><td>ConfigAutoSave<span class="opt-badge">?</span></td><td>boolean</td><td>Persist flag values automatically. Default: <code>false</code>.</td></tr>
+      </table>
+      </div>
+
+      <h2 class="section-heading">Window methods</h2>
+      <div class="component-row"><span class="comp-name">:CreateTab(cfg)</span><span class="comp-desc">Add a tab to the sidebar. Returns a Tab object.</span></div>
+      <div class="component-row"><span class="comp-name">:Destroy()</span><span class="comp-desc">Remove the window and all its instances.</span></div>
+      <div class="component-row"><span class="comp-name">:Toggle()</span><span class="comp-desc">Show or hide the window.</span></div>
+      <div class="component-row"><span class="comp-name">:SetTheme(name)</span><span class="comp-desc">Switch theme at runtime.</span></div>
+      <div class="component-row"><span class="comp-name">:ExportConfig()</span><span class="comp-desc">Returns a JSON string of all flag values.</span></div>
+      <div class="component-row"><span class="comp-name">:ImportConfig(json)</span><span class="comp-desc">Restores flag values from a JSON string.</span></div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="showPage('reporter')">
+          <span class="dir">← Previous</span><span class="nav-title">Reporter</span>
+        </button>
+        <button class="page-nav-btn next" onclick="showPage('api-createtab')">
+          <span class="dir">Next →</span><span class="nav-title">CreateTab</span>
+        </button>
+      </div>
+    </article>
+
+    <!-- API: CREATETAB -->
+    <article class="page" id="page-api-createtab">
+      <div class="breadcrumb"><a onclick="showPage('introduction')">Docs</a><span class="sep">/</span><span>API Reference</span><span class="sep">/</span><span>CreateTab</span></div>
+      <div class="page-eyebrow">API Reference</div>
+      <h1 class="page-title">CreateTab</h1>
+      <p class="page-lead">Adds a tab button to the left rail and returns a <code>Tab</code> object for adding components.</p>
+
+      <div class="codeblock">
+        <div class="codeblock-header"><span class="codeblock-lang">Luau</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">local</span> Tab <span class="op">=</span> Window<span class="op">:</span><span class="fn">CreateTab</span>({
+    Name  <span class="op">=</span> <span class="st">"Combat"</span>,
+    Icon  <span class="op">=</span> <span class="st">"rbxassetid://…"</span>,  <span class="cm">-- optional</span>
+})</pre>
+      </div>
+
+      <h2 class="section-heading">Parameters</h2>
+      <div style="overflow-x:auto">
+      <table class="param-table">
+        <tr><th>Key</th><th>Type</th><th>Description</th></tr>
+        <tr><td>Name<span class="req-badge">*</span></td><td>string</td><td>Label shown on the tab button.</td></tr>
+        <tr><td>Icon<span class="opt-badge">?</span></td><td>string</td><td>Asset ID for a small icon left of the label.</td></tr>
+        <tr><td>PremiumOnly<span class="opt-badge">?</span></td><td>boolean</td><td>Locks tab behind a Gamepass check.</td></tr>
+      </table>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="showPage('api-createwindow')">
+          <span class="dir">← Previous</span><span class="nav-title">CreateWindow</span>
+        </button>
+        <button class="page-nav-btn next" onclick="showPage('api-components')">
+          <span class="dir">Next →</span><span class="nav-title">Components</span>
+        </button>
+      </div>
+    </article>
+
+    <!-- API: COMPONENTS -->
+    <article class="page" id="page-api-components">
+      <div class="breadcrumb"><a onclick="showPage('introduction')">Docs</a><span class="sep">/</span><span>API Reference</span><span class="sep">/</span><span>Components</span></div>
+      <div class="page-eyebrow">API Reference</div>
+      <h1 class="page-title">Components</h1>
+      <p class="page-lead">37 components, all called on a <code>Tab</code> object. Every component returns an API object with at least <code>SetValue</code> / <code>GetValue</code>.</p>
+
+      <h2 class="section-heading">Input components</h2>
+      <div class="component-row"><span class="comp-name">CreateButton</span><span class="comp-desc">Press to run a callback.</span><span class="comp-tag">Interactive</span></div>
+      <div class="component-row"><span class="comp-name">CreateToggle</span><span class="comp-desc">Boolean on/off with animated dot.</span><span class="comp-tag">Interactive</span></div>
+      <div class="component-row"><span class="comp-name">CreateSlider</span><span class="comp-desc">Drag a thumb between Min and Max.</span><span class="comp-tag">Interactive</span></div>
+      <div class="component-row"><span class="comp-name">CreateDropdown</span><span class="comp-desc">Single-select list with animated expand.</span><span class="comp-tag">Interactive</span></div>
+      <div class="component-row"><span class="comp-name">CreateInput</span><span class="comp-desc">Free-text box, fires callback on Enter.</span><span class="comp-tag">Interactive</span></div>
+      <div class="component-row"><span class="comp-name">CreateColorPicker</span><span class="comp-desc">HSV wheel + hex input.</span><span class="comp-tag">Interactive</span></div>
+      <div class="component-row"><span class="comp-name">CreateKeybind</span><span class="comp-desc">Click to listen for a key press.</span><span class="comp-tag">Interactive</span></div>
+      <div class="component-row"><span class="comp-name">CreateMultiDropdown</span><span class="comp-desc">Checkbox list, returns a table of selected values.</span><span class="comp-tag">Interactive</span></div>
+
+      <h2 class="section-heading">Display components</h2>
+      <div class="component-row"><span class="comp-name">CreateLabel</span><span class="comp-desc">Single line of styled text.</span><span class="comp-tag">Display</span></div>
+      <div class="component-row"><span class="comp-name">CreateParagraph</span><span class="comp-desc">Title + wrapped body text.</span><span class="comp-tag">Display</span></div>
+      <div class="component-row"><span class="comp-name">CreateSection</span><span class="comp-desc">Divider with a centered label.</span><span class="comp-tag">Display</span></div>
+      <div class="component-row"><span class="comp-name">CreateImage</span><span class="comp-desc">Asset ID rendered in a card.</span><span class="comp-tag">Display</span></div>
+      <div class="component-row"><span class="comp-name">CreateProgressBar</span><span class="comp-desc">Animated fill bar, 0–100.</span><span class="comp-tag">Display</span></div>
+      <div class="component-row"><span class="comp-name">CreateSpinner</span><span class="comp-desc">Rotating orbit loader.</span><span class="comp-tag">Display</span></div>
+      <div class="component-row"><span class="comp-name">CreateSkeleton</span><span class="comp-desc">Shimmer placeholder while content loads.</span><span class="comp-tag">Display</span></div>
+      <div class="component-row"><span class="comp-name">CreateTable</span><span class="comp-desc">Scrollable data grid.</span><span class="comp-tag">Display</span></div>
+
+      <h2 class="section-heading">Common API shape</h2>
+      <div class="codeblock">
+        <div class="codeblock-header"><span class="codeblock-lang">Luau</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">local</span> comp <span class="op">=</span> Tab<span class="op">:</span><span class="fn">CreateSlider</span>({ Name <span class="op">=</span> <span class="st">"Speed"</span>, Min <span class="op">=</span> <span class="nm">0</span>, Max <span class="op">=</span> <span class="nm">100</span>, Default <span class="op">=</span> <span class="nm">50</span> })
+
+comp<span class="op">:</span><span class="fn">SetValue</span>(<span class="nm">75</span>)          <span class="cm">-- update programmatically</span>
+<span class="fn">print</span>(comp<span class="op">:</span><span class="fn">GetValue</span>())    <span class="cm">-- 75</span></pre>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="showPage('api-createtab')">
+          <span class="dir">← Previous</span><span class="nav-title">CreateTab</span>
+        </button>
+        <button class="page-nav-btn next" onclick="showPage('api-notify')">
+          <span class="dir">Next →</span><span class="nav-title">Notify</span>
+        </button>
+      </div>
+    </article>
+
+    <!-- API: NOTIFY -->
+    <article class="page" id="page-api-notify">
+      <div class="breadcrumb"><a onclick="showPage('introduction')">Docs</a><span class="sep">/</span><span>API Reference</span><span class="sep">/</span><span>Notify</span></div>
+      <div class="page-eyebrow">API Reference</div>
+      <h1 class="page-title">Notify</h1>
+      <p class="page-lead">Push a glass-card toast notification. Up to 6 stack at once; the oldest is dismissed to make room.</p>
+
+      <div class="codeblock">
+        <div class="codeblock-header"><span class="codeblock-lang">Luau</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>NovaUI<span class="op">:</span><span class="fn">Notify</span>({
+    Title    <span class="op">=</span> <span class="st">"Auto Farm"</span>,
+    Content  <span class="op">=</span> <span class="st">"Started successfully."</span>,
+    Type     <span class="op">=</span> <span class="st">"Success"</span>,  <span class="cm">-- Success | Danger | Warning | Info</span>
+    Duration <span class="op">=</span> <span class="nm">4</span>,           <span class="cm">-- seconds</span>
+})
+
+<span class="cm">-- Shorthand helpers</span>
+NovaUI<span class="op">:</span><span class="fn">NotifySuccess</span>(<span class="st">"Title"</span>, <span class="st">"Content"</span>)
+NovaUI<span class="op">:</span><span class="fn">NotifyError</span>(<span class="st">"Title"</span>, <span class="st">"Content"</span>)
+NovaUI<span class="op">:</span><span class="fn">NotifyWarn</span>(<span class="st">"Title"</span>, <span class="st">"Content"</span>)
+NovaUI<span class="op">:</span><span class="fn">NotifyInfo</span>(<span class="st">"Title"</span>, <span class="st">"Content"</span>)</pre>
+      </div>
+
+      <div class="callout tip"><span class="callout-icon">✦</span><div class="callout-text">When <code>NovaUI.Icons</code> is assigned, the icon slot uses a drawn icon (<code>check</code>, <code>error_</code>, <code>warning</code>, <code>info</code>) instead of a Unicode glyph.</div></div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="showPage('api-components')">
+          <span class="dir">← Previous</span><span class="nav-title">Components</span>
+        </button>
+        <button class="page-nav-btn next" onclick="showPage('api-keysystem')">
+          <span class="dir">Next →</span><span class="nav-title">KeySystem</span>
+        </button>
+      </div>
+    </article>
+
+    <!-- API: KEYSYSTEM -->
+    <article class="page" id="page-api-keysystem">
+      <div class="breadcrumb"><a onclick="showPage('introduction')">Docs</a><span class="sep">/</span><span>API Reference</span><span class="sep">/</span><span>KeySystem</span></div>
+      <div class="page-eyebrow">API Reference</div>
+      <h1 class="page-title">KeySystem</h1>
+      <p class="page-lead">Gate your script behind one or more keys. The window is hidden until the correct key is entered.</p>
+
+      <div class="codeblock">
+        <div class="codeblock-header"><span class="codeblock-lang">Luau</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>Window<span class="op">:</span><span class="fn">KeySystem</span>({
+    Title           <span class="op">=</span> <span class="st">"Authentication"</span>,
+    Subtitle        <span class="op">=</span> <span class="st">"Enter your key to continue."</span>,
+    Key             <span class="op">=</span> { <span class="st">"NOVA-ABCD-1234"</span>, <span class="st">"NOVA-EFGH-5678"</span> },
+    CorrectCallback <span class="op">=</span> <span class="kw">function</span>() <span class="fn">print</span>(<span class="st">"Unlocked!"</span>) <span class="kw">end</span>,
+    WrongCallback   <span class="op">=</span> <span class="kw">function</span>() <span class="fn">print</span>(<span class="st">"Bad key."</span>) <span class="kw">end</span>,
+    GetKey          <span class="op">=</span> <span class="st">"https://discord.gg/example"</span>, <span class="cm">-- optional link</span>
+})</pre>
+      </div>
+
+      <h2 class="section-heading">Webhook validation</h2>
+      <p>Point <code>WebhookURL</code> at an endpoint that returns <code>{"valid": true}</code> to validate keys server-side.</p>
+      <div class="codeblock">
+        <div class="codeblock-header"><span class="codeblock-lang">Luau</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>Window<span class="op">:</span><span class="fn">KeySystem</span>({
+    Title      <span class="op">=</span> <span class="st">"Key Gate"</span>,
+    WebhookURL <span class="op">=</span> <span class="st">"https://your-api.com/validate"</span>,
+    <span class="cm">-- Key table is ignored when WebhookURL is set</span>
+})</pre>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="showPage('api-notify')">
+          <span class="dir">← Previous</span><span class="nav-title">Notify</span>
+        </button>
+        <button class="page-nav-btn next" onclick="showPage('themes')">
+          <span class="dir">Next →</span><span class="nav-title">Themes</span>
+        </button>
+      </div>
+    </article>
+
+    <!-- THEMES -->
+    <article class="page" id="page-themes">
+      <div class="breadcrumb"><a onclick="showPage('introduction')">Docs</a><span class="sep">/</span><span>Customisation</span><span class="sep">/</span><span>Themes</span></div>
+      <div class="page-eyebrow">Customisation</div>
+      <h1 class="page-title">Themes</h1>
+      <p class="page-lead">22 built-in themes. Pass a name string, or pass a full table to define your own.</p>
+
+      <div class="theme-grid">
+        <div class="theme-swatch"><div class="swatch-preview" style="background:linear-gradient(135deg,#0d0d12,#1a1a24)"></div><div class="swatch-name">Dark</div></div>
+        <div class="theme-swatch"><div class="swatch-preview" style="background:linear-gradient(135deg,#f4f4f8,#e8e8f0)"></div><div class="swatch-name">Light</div></div>
+        <div class="theme-swatch"><div class="swatch-preview" style="background:linear-gradient(135deg,#1a1025,#2d1b69)"></div><div class="swatch-name">Amethyst</div></div>
+        <div class="theme-swatch"><div class="swatch-preview" style="background:linear-gradient(135deg,#0f2027,#203a43)"></div><div class="swatch-name">Ocean</div></div>
+        <div class="theme-swatch"><div class="swatch-preview" style="background:linear-gradient(135deg,#1a1a2e,#16213e)"></div><div class="swatch-name">Midnight</div></div>
+        <div class="theme-swatch"><div class="swatch-preview" style="background:linear-gradient(135deg,#0d1f0d,#1a331a)"></div><div class="swatch-name">Forest</div></div>
+        <div class="theme-swatch"><div class="swatch-preview" style="background:linear-gradient(135deg,#1f0d0d,#331a1a)"></div><div class="swatch-name">Crimson</div></div>
+        <div class="theme-swatch"><div class="swatch-preview" style="background:linear-gradient(135deg,#2d2416,#fbbf2410)"></div><div class="swatch-name">Blaze</div></div>
+        <div class="theme-swatch"><div class="swatch-preview" style="background:linear-gradient(135deg,#fdf0f5,#fce4ef)"></div><div class="swatch-name">Sakura</div></div>
+        <div class="theme-swatch"><div class="swatch-preview" style="background:linear-gradient(135deg,#fffbf0,#fef3cd)"></div><div class="swatch-name">Lemon</div></div>
+        <div class="theme-swatch"><div class="swatch-preview" style="background:linear-gradient(135deg,#2e3440,#3b4252)"></div><div class="swatch-name">Nord Dark</div></div>
+        <div class="theme-swatch"><div class="swatch-preview" style="background:linear-gradient(135deg,#eceff4,#e5e9f0)"></div><div class="swatch-name">Nord Light</div></div>
+      </div>
+
+      <h2 class="section-heading">Custom theme</h2>
+      <div class="codeblock">
+        <div class="codeblock-header"><span class="codeblock-lang">Luau</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>NovaUI<span class="op">:</span><span class="fn">RegisterTheme</span>(<span class="st">"Neon"</span>, {
+    Background  <span class="op">=</span> Color3.<span class="fn">fromRGB</span>(<span class="nm">5</span>, <span class="nm">5</span>, <span class="nm">10</span>),
+    Accent      <span class="op">=</span> Color3.<span class="fn">fromRGB</span>(<span class="nm">0</span>, <span class="nm">255</span>, <span class="nm">180</span>),
+    Text        <span class="op">=</span> Color3.<span class="fn">fromRGB</span>(<span class="nm">230</span>, <span class="nm">255</span>, <span class="nm">245</span>),
+    <span class="cm">-- ... remaining keys</span>
+})
+
+<span class="kw">local</span> Win <span class="op">=</span> NovaUI<span class="op">:</span><span class="fn">CreateWindow</span>({ Title <span class="op">=</span> <span class="st">"Hub"</span>, Theme <span class="op">=</span> <span class="st">"Neon"</span> })</pre>
+      </div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="showPage('api-keysystem')">
+          <span class="dir">← Previous</span><span class="nav-title">KeySystem</span>
+        </button>
+        <button class="page-nav-btn next" onclick="showPage('icons')">
+          <span class="dir">Next →</span><span class="nav-title">Icons</span>
+        </button>
+      </div>
+    </article>
+
+    <!-- ICONS -->
+    <article class="page" id="page-icons">
+      <div class="breadcrumb"><a onclick="showPage('introduction')">Docs</a><span class="sep">/</span><span>Customisation</span><span class="sep">/</span><span>Icons</span></div>
+      <div class="page-eyebrow">Customisation</div>
+      <h1 class="page-title">Icons</h1>
+      <p class="page-lead">50+ drawn icons, zero asset IDs. Pure Roblox Frame geometry — works in any game.</p>
+
+      <h2 class="section-heading">Load &amp; assign</h2>
+      <div class="codeblock">
+        <div class="codeblock-header"><span class="codeblock-lang">Luau</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">local</span> Icons <span class="op">=</span> <span class="fn">loadstring</span>(<span class="fn">game</span><span class="op">:</span><span class="fn">HttpGet</span>(<span class="st">"ICONS_URL"</span>))()
+NovaUI.Icons <span class="op">=</span> Icons   <span class="cm">-- enables drawn icons in Notify, etc.</span></pre>
+      </div>
+
+      <h2 class="section-heading">API</h2>
+      <div class="component-row"><span class="comp-name">Icons:Get(name, size, color)</span><span class="comp-desc">Returns a Frame or ImageLabel you can parent anywhere.</span></div>
+      <div class="component-row"><span class="comp-name">Icons:Has(name)</span><span class="comp-desc">Returns true if the named icon exists.</span></div>
+      <div class="component-row"><span class="comp-name">Icons:List()</span><span class="comp-desc">Returns a sorted array of all drawn icon names.</span></div>
+
+      <h2 class="section-heading">Example</h2>
+      <div class="codeblock">
+        <div class="codeblock-header"><span class="codeblock-lang">Luau</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">local</span> frame <span class="op">=</span> Icons<span class="op">:</span><span class="fn">Get</span>(<span class="st">"search"</span>, <span class="nm">18</span>, Color3.<span class="fn">fromRGB</span>(<span class="nm">200</span>, <span class="nm">200</span>, <span class="nm">255</span>))
+frame.Parent <span class="op">=</span> someGui</pre>
+      </div>
+
+      <div class="callout info"><span class="callout-icon">ℹ</span><div class="callout-text">Icons also has an <code>Id</code> table with 100+ Roblox system asset IDs keyed by name, for games where asset IDs are preferable.</div></div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="showPage('themes')">
+          <span class="dir">← Previous</span><span class="nav-title">Themes</span>
+        </button>
+        <button class="page-nav-btn next" onclick="showPage('config')">
+          <span class="dir">Next →</span><span class="nav-title">Config System</span>
+        </button>
+      </div>
+    </article>
+
+    <!-- CONFIG -->
+    <article class="page" id="page-config">
+      <div class="breadcrumb"><a onclick="showPage('introduction')">Docs</a><span class="sep">/</span><span>Customisation</span><span class="sep">/</span><span>Config System</span></div>
+      <div class="page-eyebrow">Customisation</div>
+      <h1 class="page-title">Config System</h1>
+      <p class="page-lead">Every flagged component writes to <code>NovaUI.Flags</code>. Export, import, or auto-save the whole state in one call.</p>
+
+      <div class="codeblock">
+        <div class="codeblock-header"><span class="codeblock-lang">Luau</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="cm">-- Read a value by its flag key</span>
+<span class="fn">print</span>(NovaUI.Flags[<span class="st">"WalkSpeed"</span>])   <span class="cm">-- e.g. 75</span>
+
+<span class="cm">-- Export all flags as JSON</span>
+<span class="kw">local</span> json <span class="op">=</span> NovaUI<span class="op">:</span><span class="fn">ExportConfig</span>()
+
+<span class="cm">-- Restore from JSON</span>
+NovaUI<span class="op">:</span><span class="fn">ImportConfig</span>(json)
+
+<span class="cm">-- Auto-save on every flag change (pass in CreateWindow)</span>
+<span class="kw">local</span> Win <span class="op">=</span> NovaUI<span class="op">:</span><span class="fn">CreateWindow</span>({ ConfigAutoSave <span class="op">=</span> <span class="kw">true</span>, <span class="op">...</span> })</pre>
+      </div>
+
+      <div class="callout warn"><span class="callout-icon">⚠</span><div class="callout-text"><strong>Color3 and EnumItems</strong> are serialized automatically via a typed wrapper. You don't need to stringify them manually.</div></div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="showPage('icons')">
+          <span class="dir">← Previous</span><span class="nav-title">Icons</span>
+        </button>
+        <button class="page-nav-btn next" onclick="showPage('lite')">
+          <span class="dir">Next →</span><span class="nav-title">NovaUI Lite</span>
+        </button>
+      </div>
+    </article>
+
+    <!-- LITE -->
+    <article class="page" id="page-lite">
+      <div class="breadcrumb"><a onclick="showPage('introduction')">Docs</a><span class="sep">/</span><span>Advanced</span><span class="sep">/</span><span>NovaUI Lite</span></div>
+      <div class="page-eyebrow">Advanced</div>
+      <h1 class="page-title">NovaUI Lite</h1>
+      <p class="page-lead">A slim fallback library (~450 lines) with the same API surface. Loads in under 5 ms. No depth effects, no tweens.</p>
+
+      <h2 class="section-heading">Auto-fallback pattern</h2>
+      <div class="codeblock">
+        <div class="codeblock-header"><span class="codeblock-lang">Luau</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><span class="kw">local</span> NovaUI <span class="op">=</span> <span class="fn">loadstring</span>(<span class="fn">game</span><span class="op">:</span><span class="fn">HttpGet</span>(NOVA_URL))()
+           <span class="kw">or</span> <span class="fn">loadstring</span>(<span class="fn">game</span><span class="op">:</span><span class="fn">HttpGet</span>(LITE_URL))()</pre>
+      </div>
+
+      <h2 class="section-heading">What's included</h2>
+      <div class="component-row"><span class="comp-name">All 37 components</span><span class="comp-desc">Heavier ones stub gracefully — code never errors.</span><span class="comp-tag">✓</span></div>
+      <div class="component-row"><span class="comp-name">3 themes</span><span class="comp-desc">Dark, Light, Midnight. All 22 full-NovaUI names aliased.</span><span class="comp-tag">✓</span></div>
+      <div class="component-row"><span class="comp-name">Notify + Dialog</span><span class="comp-desc">Same API, no glass/blur effects.</span><span class="comp-tag">✓</span></div>
+      <div class="component-row"><span class="comp-name">KeySystem</span><span class="comp-desc">Plain modal input, same callback shape.</span><span class="comp-tag">✓</span></div>
+      <div class="component-row"><span class="comp-name">Config stubs</span><span class="comp-desc">SaveConfig / LoadConfig are no-ops — won't crash callers.</span><span class="comp-tag">✓</span></div>
+      <div class="component-row"><span class="comp-name">Depth effects</span><span class="comp-desc">TopHL, SurfaceGrad, ShineLayer, GlowRing stripped.</span><span class="comp-tag">✗</span></div>
+      <div class="component-row"><span class="comp-name">Tweens</span><span class="comp-desc">All transitions are instant.</span><span class="comp-tag">✗</span></div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="showPage('config')">
+          <span class="dir">← Previous</span><span class="nav-title">Config System</span>
+        </button>
+        <button class="page-nav-btn next" onclick="showPage('mobile')">
+          <span class="dir">Next →</span><span class="nav-title">Mobile Support</span>
+        </button>
+      </div>
+    </article>
+
+    <!-- MOBILE -->
+    <article class="page" id="page-mobile">
+      <div class="breadcrumb"><a onclick="showPage('introduction')">Docs</a><span class="sep">/</span><span>Advanced</span><span class="sep">/</span><span>Mobile Support</span></div>
+      <div class="page-eyebrow">Advanced</div>
+      <h1 class="page-title">Mobile Support</h1>
+      <p class="page-lead">NovaUI detects touch devices at <code>CreateWindow</code> time and adapts automatically. No extra config needed.</p>
+
+      <h2 class="section-heading">What adapts</h2>
+      <div class="component-row"><span class="comp-name">Window size</span><span class="comp-desc">Clamps to viewport minus a safe margin.</span><span class="comp-tag">Auto</span></div>
+      <div class="component-row"><span class="comp-name">Window position</span><span class="comp-desc">Snaps to top-left on mobile instead of centering.</span><span class="comp-tag">Auto</span></div>
+      <div class="component-row"><span class="comp-name">Notifications</span><span class="comp-desc">Slide up from bottom on touch devices.</span><span class="comp-tag">Auto</span></div>
+      <div class="component-row"><span class="comp-name">Drag</span><span class="comp-desc">Touch input handled alongside mouse on all draggable elements.</span><span class="comp-tag">Auto</span></div>
+      <div class="component-row"><span class="comp-name">Slider thumb</span><span class="comp-desc">Larger hit target on touch.</span><span class="comp-tag">Auto</span></div>
+
+      <div class="callout tip"><span class="callout-icon">✦</span><div class="callout-text">The mobile check is memoised per window. Call <code>IsMobile()</code> inside scripts to branch on the same result NovaUI used.</div></div>
+
+      <div class="page-nav">
+        <button class="page-nav-btn" onclick="showPage('lite')">
+          <span class="dir">← Previous</span><span class="nav-title">NovaUI Lite</span>
+        </button>
+      </div>
+    </article>
+
+  </main>
+</div>
+
+<script>
+// ─── Navigation ───────────────────────────────────────────────
+const pages   = document.querySelectorAll('.page');
+const navLinks = document.querySelectorAll('.sidebar-link');
+
+function showPage(id) {
+  pages.forEach(p => p.classList.remove('active'));
+  navLinks.forEach(l => l.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if (page) { page.classList.add('active'); document.querySelector('.content').scrollTop = 0; }
+  navLinks.forEach(l => {
+    if (l.getAttribute('onclick') && l.getAttribute('onclick').includes("'" + id + "'")) {
+      l.classList.add('active');
+    }
+  });
+}
+
+// ─── Copy buttons ─────────────────────────────────────────────
+function copyCode(btn) {
+  const pre = btn.closest('.codeblock').querySelector('pre');
+  const text = pre.innerText || pre.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+  }).catch(() => {
+    const sel = window.getSelection(), range = document.createRange();
+    range.selectNodeContents(pre); sel.removeAllRanges(); sel.addRange(range);
+  });
+}
+
+// ─── Theme toggle ─────────────────────────────────────────────
+let darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+document.getElementById('themeToggle').addEventListener('click', () => {
+  darkMode = !darkMode;
+  document.documentElement.dataset.theme = darkMode ? 'dark' : 'light';
+});
+
+// ─── Search (highlight + jump) ────────────────────────────────
+const searchInput = document.getElementById('searchInput');
+const pageMap = {
+  'introduction':['intro','overview','about','load','start'],
+  'quickstart':['quick','example','demo','toggle','slider','flag'],
+  'reporter':['reporter','webhook','discord','error','hash','userid'],
+  'api-createwindow':['window','createwindow','togglekey','subtitle'],
+  'api-createtab':['tab','createtab','icon','premium'],
+  'api-components':['component','button','dropdown','input','color','keybind','progress','spinner','skeleton','table','image','label','paragraph','section'],
+  'api-notify':['notify','notification','toast','success','danger','warning','info'],
+  'api-keysystem':['key','keysystem','gate','lock','validate','webhook'],
+  'themes':['theme','dark','light','amethyst','ocean','custom','register'],
+  'icons':['icon','icons','draw','asset','get','has','list'],
+  'config':['config','flag','export','import','save','autosave','json'],
+  'lite':['lite','fallback','slim','fast','stripped'],
+  'mobile':['mobile','touch','phone','drag'],
+};
+searchInput.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const q = searchInput.value.toLowerCase().trim();
+  if (!q) return;
+  for (const [page, kws] of Object.entries(pageMap)) {
+    if (kws.some(k => k.includes(q) || q.includes(k))) { showPage(page); searchInput.value = ''; return; }
+  }
+});
+</script>
+
+</body></html>
