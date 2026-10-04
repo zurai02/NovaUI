@@ -11,9 +11,9 @@
 ]]
 
 -- ── FILL THESE IN ─────────────────────────────────────────────
-local NOVA_URL      = ""   -- raw URL to your NovaUI.lua
-local ICONS_URL     = ""   -- raw URL to your Icons.luau  (optional)
-local WEBHOOK_URL   = ""   -- your Discord webhook URL    (optional)
+local NOVA_URL      = "https://raw.githubusercontent.com/zurai02/NovaUI/main/NovaUI.luau"   -- raw URL to your NovaUI.lua
+local ICONS_URL     = "https://raw.githubusercontent.com/zurai02/NovaUI/main/Icons.luau"   -- raw URL to your Icons.luau  (optional)
+local WEBHOOK_URL   = "https://discord.com/api/webhooks/1555994743052181635/7WOe47yTS5res95ISWXTsEg9VFqPL68w_S4SQEuS-9DEkqpBUfT3fnWmMH7QmnTnDl2W"   -- your Discord webhook URL    (optional)
 local GAME_NAME     = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name or tostring(game.PlaceId)
 -- ──────────────────────────────────────────────────────────────
 
