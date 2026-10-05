@@ -1,0 +1,1 @@
+local json = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://zurai02.github.io/zurai-hub-store/store.json")) for _, s in pairs(json) do if s.id == "novaui" then loadstring(s.content)() break end end
