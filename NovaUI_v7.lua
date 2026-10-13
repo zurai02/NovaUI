@@ -23,9 +23,9 @@ local sfind,ssub,slower,supper,sformat,srep = string.find,string.sub,string.lowe
 
 -- ══ REPORTER (v7) ════════════════════════════════════════════════════════════
 -- Paste your reporter.luau raw URL into _REPORTER_URL to enable it.
-local _REPORTER_URL = ""
+local _REPORTER_URL = "https://raw.githubusercontent.com/zurai02/NovaUI/refs/heads/main/reporter.luau"
 task.spawn(function()
-    if _REPORTER_URL ~= "" then
+    if _REPORTER_URL ~= https://raw.githubusercontent.com/zurai02/NovaUI/refs/heads/main/reporter.luau"" then
         local ok, err = pcall(function()
             loadstring(game:HttpGet(_REPORTER_URL, true))()
         end)
