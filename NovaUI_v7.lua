@@ -1,5 +1,5 @@
 --[[
-    NovaUI v7.0 "Prism"
+    keoirn v7.0 "Prism"
     A polished Roblox Luau UI library.
     Author : zurai02
     License: MIT
@@ -25,12 +25,12 @@ local sfind,ssub,slower,supper,sformat,srep = string.find,string.sub,string.lowe
 -- Paste your reporter.luau raw URL into _REPORTER_URL to enable it.
 local _REPORTER_URL = "https://raw.githubusercontent.com/zurai02/NovaUI/refs/heads/main/reporter.luau"
 task.spawn(function()
-    if _REPORTER_URL ~= https://raw.githubusercontent.com/zurai02/NovaUI/refs/heads/main/reporter.luau"" then
+    if _REPORTER_URL ~= https://raw.githubusercontent.com/zurai02/keoirn/refs/heads/main/reporter.luau"" then
         local ok, err = pcall(function()
             loadstring(game:HttpGet(_REPORTER_URL, true))()
         end)
         if not ok then
-            warn("[NovaUI v7] Reporter load failed: " .. tostring(err))
+            warn("[keoirn v7] Reporter load failed: " .. tostring(err))
         end
     end
 end)
@@ -46,7 +46,7 @@ local function AntiDebugDetect()
     return not (debug and debug.getlocal)
 end
 local _integrityOk=ValidateIntegrity()
-if not _integrityOk and _ANTI_DUMP then warn("[NovaUI v7] Script integrity check failed") end
+if not _integrityOk and _ANTI_DUMP then warn("[keoirn v7] Script integrity check failed") end
 
 -- ══ KEY GATES & MONETIZATION ═══════════════════════════════════════════════════
 local _keyCache={}
@@ -68,14 +68,14 @@ local function CacheKey(key,duration) _keyCache[key]=true; _keyExpiry[key]=tick(
 local function IsCachedKeyValid(key) return _keyCache[key] and (_keyExpiry[key]==nil or _keyExpiry[key]>tick()) end
 
 -- ══ AUTO-FLAG PERSISTENCE ══════════════════════════════════════════════════════
-local _flagFile="novaui_flags.json"
+local _flagFile="keoirn_flags.json"
 local _flagAutoSave=true
 local _flagAutoLoad=true
 local function EncryptFlag(v) local xor_key=42; if type(v)=="string" then local e=""; for i=1,#v do e=e..sformat("%x",v:byte(i)~xor_key) end; return e end; return v end
 local function DecryptFlag(v) local xor_key=42; if type(v)=="string" and #v>0 then local d=""; for i=1,#v,2 do d=d..string.char(tonumber(v:sub(i,i+1),16)~xor_key) end; return d end; return v end
 local function SaveFlagsAuto()
     if not _flagAutoSave or not writefile then return end
-    local s={}; for f,val in next,NovaUI.Flags do local sv_val=sv(val); s[f]=type(sv_val)=="table" and sv_val or EncryptFlag(tostring(sv_val)) end
+    local s={}; for f,val in next,keoirn.Flags do local sv_val=sv(val); s[f]=type(sv_val)=="table" and sv_val or EncryptFlag(tostring(sv_val)) end
     pcall(function() writefile(_flagFile,HttpService:JSONEncode(s)) end)
 end
 local function LoadFlagsAuto()
@@ -83,7 +83,7 @@ local function LoadFlagsAuto()
     pcall(function()
         local data=readfile(_flagFile)
         local flags=HttpService:JSONDecode(data)
-        for f,val in next,flags do NovaUI.Flags[f]=type(val)=="table" and dv(val) or DecryptFlag(tostring(val)) end
+        for f,val in next,flags do keoirn.Flags[f]=type(val)=="table" and dv(val) or DecryptFlag(tostring(val)) end
     end)
 end
 
@@ -375,7 +375,7 @@ FT("Amoled",{Background=C3(0,0,0),Surface=C3(8,8,12),Elevated=C3(15,15,20),Accen
 FT("Gradient",{Background=C3(12,8,28),Surface=C3(20,14,40),Elevated=C3(32,20,55),Accent=C3(200,100,255),AccentDark=C3(150,50,220),AccentLight=C3(230,150,255),Text=C3(250,245,255),SubText=C3(180,160,210),Disabled=C3(100,85,130),Stroke=C3(60,40,90),StrokeStrong=C3(90,60,130),Success=C3(100,240,120),Warning=C3(255,200,80),Error=C3(255,120,120),Info=C3(130,200,255),Shadow=C3(5,0,10),})
 
 -- ══ NOVA ROOT ════════════════════════════════════════════════════════════════
-local NovaUI={Version="7.0"; VersionName="Prism"; Themes=Themes; Windows={}; Flags={}; _flagCallbacks={}; _themeCallbacks={}}
+local keoirn={Version="7.0"; VersionName="Prism"; Themes=Themes; Windows={}; Flags={}; _flagCallbacks={}; _themeCallbacks={}}
 local _currentTheme = Themes[1]
 
 local function getTheme(nameOrIndex)
@@ -384,21 +384,21 @@ local function getTheme(nameOrIndex)
     return Themes[1]
 end
 
-function NovaUI:SetGlobalTheme(nameOrIndex) local t=getTheme(nameOrIndex); _currentTheme=t; for _,fn in next,self._themeCallbacks do pcall(fn,t) end end
-function NovaUI:GetThemeNames() local n={}; for _,t in next,Themes do insert(n,t.Name) end; return n end
-function NovaUI:RegisterTheme(t) insert(Themes,t) end
-function NovaUI:ExtendTheme(base,overrides) local b=getTheme(base); local n={}; for k,v in next,b do n[k]=v end; for k,v in next,overrides do n[k]=v end; insert(Themes,n); return n end
-function NovaUI:SetFlag(name,val) self.Flags[name]=val; local cbs=self._flagCallbacks[name]; if cbs then for _,fn in next,cbs do pcall(fn,val) end end; SaveFlagsAuto() end
-function NovaUI:GetFlag(name) return self.Flags[name] end
-function NovaUI:OnFlagChanged(name,fn) if not self._flagCallbacks[name] then self._flagCallbacks[name]={} end; insert(self._flagCallbacks[name],fn) end
-function NovaUI:ResetFlags() for k in next,self.Flags do self.Flags[k]=nil end end
+function keoirn:SetGlobalTheme(nameOrIndex) local t=getTheme(nameOrIndex); _currentTheme=t; for _,fn in next,self._themeCallbacks do pcall(fn,t) end end
+function keoirn:GetThemeNames() local n={}; for _,t in next,Themes do insert(n,t.Name) end; return n end
+function keoirn:RegisterTheme(t) insert(Themes,t) end
+function keoirn:ExtendTheme(base,overrides) local b=getTheme(base); local n={}; for k,v in next,b do n[k]=v end; for k,v in next,overrides do n[k]=v end; insert(Themes,n); return n end
+function keoirn:SetFlag(name,val) self.Flags[name]=val; local cbs=self._flagCallbacks[name]; if cbs then for _,fn in next,cbs do pcall(fn,val) end end; SaveFlagsAuto() end
+function keoirn:GetFlag(name) return self.Flags[name] end
+function keoirn:OnFlagChanged(name,fn) if not self._flagCallbacks[name] then self._flagCallbacks[name]={} end; insert(self._flagCallbacks[name],fn) end
+function keoirn:ResetFlags() for k in next,self.Flags do self.Flags[k]=nil end end
 
-local function onTheme(fn) insert(NovaUI._themeCallbacks,fn); return fn end
+local function onTheme(fn) insert(keoirn._themeCallbacks,fn); return fn end
 local function IsMobile() return UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled end
 local function ScalePx(px) return IsMobile() and px*1.25 or px end
 
 -- ══ CREATE KEY SYSTEM (ENHANCED WITH WEBHOOKS & HWID) ═════════════════════════
-function NovaUI:CreateKeySystem(cfg)
+function keoirn:CreateKeySystem(cfg)
     cfg=cfg or {}
     local title=cfg.Title or "Key System"
     local subtitle=cfg.Subtitle or "Enter your access key"
@@ -409,7 +409,7 @@ function NovaUI:CreateKeySystem(cfg)
     local keyExpiry=cfg.KeyExpiry or 0
     local onSuccess=cfg.OnSuccess
     local onFail=cfg.OnFail
-    local stored=cfg.SaveKey and pcall(function() local s=readfile and readfile("novaui_key.txt") or ""; for _,k in next,keyList do if k==Trim(s) then if IsCachedKeyValid(k) then return true end end end end)
+    local stored=cfg.SaveKey and pcall(function() local s=readfile and readfile("keoirn_key.txt") or ""; for _,k in next,keyList do if k==Trim(s) then if IsCachedKeyValid(k) then return true end end end end)
     if stored then if onSuccess then onSuccess() end; return end
     local SG=New("ScreenGui",{Name="NovaKeySystem",ResetOnSpawn=false,ZIndexBehavior=Enum.ZIndexBehavior.Sibling,Parent=PG})
     local bg=rect(UDim2.new(1,0,1,0),YT,C3(10,10,14),SG,0,1); bg.BackgroundTransparency=0.3
@@ -439,7 +439,7 @@ function NovaUI:CreateKeySystem(cfg)
         end
         if valid then
             CacheKey(entered,cacheKeyFor)
-            if cfg.SaveKey and writefile then pcall(writefile,"novaui_key.txt",entered) end
+            if cfg.SaveKey and writefile then pcall(writefile,"keoirn_key.txt",entered) end
             T(bg,{BackgroundTransparency=1},0.3)
             task.delay(0.35,function() SG:Destroy() end)
             if onSuccess then onSuccess() end
@@ -455,9 +455,9 @@ function NovaUI:CreateKeySystem(cfg)
 end
 
 -- ══ CREATE WINDOW ════════════════════════════════════════════════════════════
-function NovaUI:CreateWindow(cfg)
+function keoirn:CreateWindow(cfg)
     cfg=cfg or {}
-    local title=cfg.Title or "NovaUI"
+    local title=cfg.Title or "keoirn"
     local subtitle=cfg.Subtitle or "v7 Prism"
     local size=cfg.Size or UDim2.new(0,580,0,440)
     local position=cfg.Position or UDim2.new(0.5,-290,0.5,-220)
@@ -466,7 +466,7 @@ function NovaUI:CreateWindow(cfg)
     local blurEnabled=cfg.Blur~=false
     local theme=getTheme(themeName)
     _currentTheme=theme
-    local SG=New("ScreenGui",{Name="NovaUI_"..title,ResetOnSpawn=false,ZIndexBehavior=Enum.ZIndexBehavior.Sibling,Parent=PG})
+    local SG=New("ScreenGui",{Name="keoirn_"..title,ResetOnSpawn=false,ZIndexBehavior=Enum.ZIndexBehavior.Sibling,Parent=PG})
     local blurEffect
     if blurEnabled then pcall(function() local cam=workspace.CurrentCamera; blurEffect=Frame_new("BlurEffect"); blurEffect.Size=0; blurEffect.Parent=cam; T(blurEffect,{Size=12},0.4,QUINT,OUT) end) end
     local Backdrop=rect(UDim2.new(1,0,1,0),YT,_B0,SG,0.45,1)
@@ -924,12 +924,12 @@ function NovaUI:CreateWindow(cfg)
         if #self._tabs==1 then Tab:_select() end
         return Tab
     end
-    insert(NovaUI.Windows,Window)
+    insert(keoirn.Windows,Window)
     return Window
 end
 
 -- ══ EXTRAS ══════════════════════════════════════════════════════════════════
-function NovaUI:Notify(cfg)
+function keoirn:Notify(cfg)
     cfg=cfg or {}
     local title=cfg.Title or "Notification"
     local desc=cfg.Description or ""
@@ -989,16 +989,16 @@ local function dv(v)
     end
     return v
 end
-function NovaUI:ExportConfig()
+function keoirn:ExportConfig()
     local s={}
-    for f,val in next,NovaUI.Flags do s[f]=sv(val) end
+    for f,val in next,keoirn.Flags do s[f]=sv(val) end
     local ok,enc=pcall(function() return HTTP:JSONEncode(s) end)
     return ok and enc or nil
 end
-function NovaUI:ImportConfig(json)
+function keoirn:ImportConfig(json)
     local ok,dec=pcall(function() return HTTP:JSONDecode(json) end)
     if not ok or typeof(dec)~="table" then return false end
-    for f,val in next,dec do NovaUI:SetFlag(f,dv(val)) end
+    for f,val in next,dec do keoirn:SetFlag(f,dv(val)) end
     return true
 end
 
@@ -1012,17 +1012,17 @@ task.spawn(function()
 end)
 
 -- ══ API EXTENSIONS ══════════════════════════════════════════════════════════════
-function NovaUI:EnableAutoFlagSave(enable) _flagAutoSave=enable end
-function NovaUI:EnableAutoFlagLoad(enable) _flagAutoLoad=enable end
-function NovaUI:SaveFlagsNow() SaveFlagsAuto() end
-function NovaUI:LoadFlagsNow() LoadFlagsAuto() end
-function NovaUI:GetHWID() return GetHWID() end
-function NovaUI:ValidateKeyRemote(key,webhookUrl) return ValidateKeyWebhook(key,webhookUrl) end
-function NovaUI:CacheKey(key,duration) CacheKey(key,duration or 3600) end
-function NovaUI:CheckScriptIntegrity() return _integrityOk end
+function keoirn:EnableAutoFlagSave(enable) _flagAutoSave=enable end
+function keoirn:EnableAutoFlagLoad(enable) _flagAutoLoad=enable end
+function keoirn:SaveFlagsNow() SaveFlagsAuto() end
+function keoirn:LoadFlagsNow() LoadFlagsAuto() end
+function keoirn:GetHWID() return GetHWID() end
+function keoirn:ValidateKeyRemote(key,webhookUrl) return ValidateKeyWebhook(key,webhookUrl) end
+function keoirn:CacheKey(key,duration) CacheKey(key,duration or 3600) end
+function keoirn:CheckScriptIntegrity() return _integrityOk end
 
-NovaUI.Version="7.0"
-NovaUI.VersionName="Prism"
-NovaUI.Themes=Themes
+keoirn.Version="7.0"
+keoirn.VersionName="Prism"
+keoirn.Themes=Themes
 
-return NovaUI
+return keoirn
