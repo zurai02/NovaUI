@@ -21,20 +21,6 @@ local sin,cos,huge  = math.sin,math.cos,math.huge
 local insert,remove,sort = table.insert,table.remove,table.sort
 local sfind,ssub,slower,supper,sformat,srep = string.find,string.sub,string.lower,string.upper,string.format,string.rep
 
--- ══ REPORTER (v7) ════════════════════════════════════════════════════════════
--- Paste your reporter.luau raw URL into _REPORTER_URL to enable it.
-local _REPORTER_URL = "https://raw.githubusercontent.com/zurai02/NovaUI/refs/heads/main/reporter.luau"
-task.spawn(function()
-    if _REPORTER_URL ~= https://raw.githubusercontent.com/zurai02/keoirn/refs/heads/main/reporter.luau"" then
-        local ok, err = pcall(function()
-            loadstring(game:HttpGet(_REPORTER_URL, true))()
-        end)
-        if not ok then
-            warn("[keoirn v7] Reporter load failed: " .. tostring(err))
-        end
-    end
-end)
-
 -- ══ SECURITY SYSTEM (ANTI-DUMP) ════════════════════════════════════════════════
 local _ANTI_DUMP=true
 local function ScriptSignature() return sformat("%x%x%x",math.random(0xFFFFFF),math.random(0xFFFFFF),math.random(0xFFFFFF)) end
