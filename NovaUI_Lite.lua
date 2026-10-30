@@ -1,14 +1,14 @@
 --[[
 ╔══════════════════════════════════════════════════════════════════╗
 ║  N O V A U I   L I T E   ·   v 6 . 0   ·   " L u m e n "       ║
-║  Slim fallback — same API as NovaUI, no depth effects/tweens     ║
+║  Slim fallback — same API as keoirn, no depth effects/tweens     ║
 ║  ~450 lines · zero external assets · loads in <5 ms              ║
 ╚══════════════════════════════════════════════════════════════════╝
   Usage (auto-fallback in reporter.luau):
-      local NovaUI = loadstring(game:HttpGet(NOVA_URL))()
+      local keoirn = loadstring(game:HttpGet(NOVA_URL))()
                or loadstring(game:HttpGet(LITE_URL))()
   Or directly:
-      local NovaUI = loadstring(game:HttpGet(LITE_URL))()
+      local keoirn = loadstring(game:HttpGet(LITE_URL))()
 ]]
 
 -- ══ SERVICES ══════════════════════════════════════════════════════
@@ -79,7 +79,7 @@ local THEMES = {
         Success     = C3(34,197,94),
     },
 }
--- Alias all 22 NovaUI theme names to one of the 3 above
+-- Alias all 22 keoirn theme names to one of the 3 above
 local _ALIAS = {
     Amethyst="Dark",Aurora="Dark",Blaze="Dark",Blueberry="Dark",
     Carbon="Dark",Cherry="Dark",Cobalt="Dark",Crimson="Dark",
@@ -91,8 +91,8 @@ local _ALIAS = {
 for k,v in next,_ALIAS do if not THEMES[k] then THEMES[k]=THEMES[v] end end
 
 -- ══ ICONS (optional, set by reporter fallback) ══════════════════════
--- NovaUI_Lite will use NovaUI_Lite.Icons if assigned externally.
--- e.g.  NovaUI_Lite.Icons = Icons  before calling CreateWindow.
+-- keoirn_Lite will use keoirn_Lite.Icons if assigned externally.
+-- e.g.  keoirn_Lite.Icons = Icons  before calling CreateWindow.
 
 -- ══ NOTIFY QUEUE ══════════════════════════════════════════════════
 local _notifGui, _notifStack, _notifY = nil, {}, 8
@@ -218,11 +218,11 @@ function NL:CreateWindow(cfg)
     cfg = cfg or {}
     local themeName = cfg.Theme or "Dark"
     local theme = THEMES[themeName] or THEMES.Dark
-    local title = cfg.Name or "NovaUI Lite"
+    local title = cfg.Name or "keoirn Lite"
 
     -- Root
     local gui = New("ScreenGui",{
-        Name="NovaUILite",ResetOnSpawn=false,
+        Name="keoirnLite",ResetOnSpawn=false,
         DisplayOrder=100,IgnoreGuiInset=true,Parent=PG
     })
 
@@ -691,7 +691,7 @@ function NL:CreateWindow(cfg)
             return {}
         end
 
-        -- Stubs that share the same structure as full NovaUI so callers don't error
+        -- Stubs that share the same structure as full keoirn so callers don't error
         function Tab:CreateSpinner(cfg)    return Tab:CreateLabel(cfg) end
         function Tab:CreateSkeleton(cfg)   return {} end
         function Tab:CreateProgressBar(cfg)
