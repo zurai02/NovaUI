@@ -5,6 +5,63 @@
     License: MIT
 --]]
 
+-- ══ DEVICE / EXECUTOR GATE → AUTO-LITE ═══════════════════════════════════════
+local _LITE_URL = "https://raw.githubusercontent.com/zurai02/NovaUI/refs/heads/main/Lite.lua"
+
+local _env = (getfenv and getfenv(1)) or _G
+local _caps, _probes = 0, {"Drawing","gethui","queue_on_teleport","setclipboard","hookfunction","getconnections","getgc","request"}
+for _, _name in next, _probes do
+    if rawget(_env, _name) ~= nil then _caps = _caps + 1 end
+end
+
+local _weakReasons = {}
+
+-- 1) Touch-only device (phone / tablet) counts as weak
+pcall(function()
+    local UIS = game:GetService("UserInputService")
+    local touch   = UIS.TouchEnabled
+    local keyboard = UIS.KeyboardEnabled
+    local mouse   = UIS.MouseEnabled
+    if touch and not keyboard and not mouse then
+        _weakReasons[#_weakReasons+1] = "touch-only device"
+    end
+end)
+
+-- 2) Known low-end / lightweight executors
+local _lowEnd = {"delta","hydrogen","codex","arceus","vega","fluxus","solara","cryptic","ronin","kiwi","mango"}
+local _idfn = rawget(_env, "identifyexecutor") or rawget(_env, "getexecutorname")
+pcall(function()
+    local ok, name = _idfn()
+    if ok and name then
+        local lower = string.lower(tostring(name))
+        for _, n in next, _lowEnd do
+            if string.find(lower, n, 1, true) then
+                _weakReasons[#_weakReasons+1] = "executor: " .. tostring(name)
+                break
+            end
+        end
+    end
+end)
+
+-- 3) Missing most advanced executor APIs
+if _caps <= 3 then
+    _weakReasons[#_weakReasons+1] = "missing executor APIs (" .. _caps .. "/" .. #_probes .. ")"
+end
+
+if #_weakReasons > 0 then
+    print("[NovaUI] Weak environment detected (" .. table.concat(_weakReasons, ", ") .. ") -> loading NovaUI Lite")
+    local _ok, _err = pcall(function()
+        local _src = game:HttpGet(_LITE_URL)
+        local _fn = (loadstring or load)(_src)
+        if not _fn then error("loadstring unavailable on this executor") end
+        _fn()
+    end)
+    if _ok then
+        return -- Lite handled everything; skip the full v7 build
+    end
+    warn("[NovaUI] Lite fallback failed (" .. tostring(_err) .. ") - falling back to full v7")
+end
+
 -- ══ SERVICES ════════════════════════════════════════════════════════════════
 local Players       = game:GetService("Players")
 local RunService    = game:GetService("RunService")
