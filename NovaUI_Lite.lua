@@ -1,15 +1,3 @@
---[[
-╔══════════════════════════════════════════════════════════════════╗
-║  N O V A U I   L I T E   ·   v 6 . 0   ·   " L u m e n "       ║
-║  Slim fallback — same API as keoirn, no depth effects/tweens     ║
-║  ~450 lines · zero external assets · loads in <5 ms              ║
-╚══════════════════════════════════════════════════════════════════╝
-  Usage (auto-fallback in reporter.luau):
-      local keoirn = loadstring(game:HttpGet(NOVA_URL))()
-               or loadstring(game:HttpGet(LITE_URL))()
-  Or directly:
-      local keoirn = loadstring(game:HttpGet(LITE_URL))()
-]]
 
 -- ══ SERVICES ══════════════════════════════════════════════════════
 local PLR  = game:GetService("Players")
